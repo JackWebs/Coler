@@ -18,6 +18,7 @@ using coler.Model.Enum;
 using coler.Model.GenImage;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using Microsoft.Win32;
 using Color = System.Windows.Media.Color;
 using PixelData = coler.Model.PixelData;
 
@@ -55,6 +56,7 @@ namespace coler.ViewModel
         private BitmapScalingMode _selectedScalingMode = BitmapScalingMode.Fant;
         private List<BitmapScalingMode> _scalingModes;
         private bool _useTemplate;
+        private bool _invertTemplate;
         private string _templatePath;
         private Color _selectedColor = Color.FromRgb(255, 255, 255);
         private int _maskWidth;
@@ -313,6 +315,17 @@ namespace coler.ViewModel
             }
         }
 
+        public bool InvertTemplate
+        {
+            get => _invertTemplate;
+            set
+            {
+                if (value == _invertTemplate) return;
+                _invertTemplate = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Getter Properties
@@ -341,6 +354,7 @@ namespace coler.ViewModel
         public ICommand RefreshGridCommand { get; private set; }
         public ICommand RedrawGridCommand { get; private set; }
         public ICommand GenerateImageCommand { get; private set; }
+        public ICommand SelectTemplateCommand { get; private set; }
 
         #endregion
 
@@ -374,6 +388,7 @@ namespace coler.ViewModel
             RefreshGridCommand = new RelayCommand(RefreshGrid);
             RedrawGridCommand = new RelayCommand(RedrawGrid);
             GenerateImageCommand = new RelayCommand(GenerateImage);
+            SelectTemplateCommand = new RelayCommand(SelectTemplate);
         }
 
         private void InitializePoints()
@@ -503,17 +518,18 @@ namespace coler.ViewModel
             CurrentImage = genImage;
         }
 
-        /*public void SelectTemplate()
+        public void SelectTemplate()
         {
-            OpenFileDialogService.Filter = "Template Images(*.png; *.jpg)|*.png; *.jpg";
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Template Images(*.png; *.jpg)|*.png; *.jpg",
+                InitialDirectory = FilePaths.TemplateDirectory
+            };
 
-            DialogResult = OpenFileDialogService.ShowDialog(FilePaths.TemplateDirectory);
-
-            if (!DialogResult) return;
-
-            var selectedFile = OpenFileDialogService.File;
-
-            TemplatePath = selectedFile.GetFullName();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                TemplatePath = openFileDialog.FileName;
+            }
 
             try
             {
@@ -523,9 +539,9 @@ namespace coler.ViewModel
             }
             catch (Exception ex)
             {
-                // ignored
+                //ignored
             }
-        }*/
+        }
 
         #endregion
 
@@ -644,8 +660,22 @@ namespace coler.ViewModel
 
             mask = new Bitmap(Width, Height);
 
+            // Center Mask
             int xOffset = (Width - MaskWidth) / 2;
             int yOffset = (Height - MaskHeight) / 2;
+
+            if (InvertTemplate)
+            {
+                for (var x = 0; x < Width; x++)
+                {
+                    for (var y = 0; y < Height; y++)
+                    {
+                        mask.SetPixel(x, y, System.Drawing.Color.Black);
+                    }
+                }
+
+                template = InvertMask(template);
+            }
 
             for (var x = 0; x < Width; x++)
             {
@@ -662,9 +692,33 @@ namespace coler.ViewModel
                 }
             }
 
-            Utils.Transparent2Color(mask, BackgroundColor);
+            Utils.Transparent2Color(mask, System.Drawing.Color.Black);
 
             return mask;
+        }
+
+        private Bitmap InvertMask(Bitmap template)
+        {
+            var invertBitmap = new Bitmap(template.Width, template.Height);
+
+            for (var x = 0; x < template.Width; x++)
+            {
+                for (var y = 0; y < template.Height; y++)
+                {
+                    var templatePixel = template.GetPixel(x, y);
+
+                    var invertedColor = System.Drawing.Color.FromArgb
+                        (
+                            Math.Abs(templatePixel.R - 255),
+                            Math.Abs(templatePixel.G - 255),
+                            Math.Abs(templatePixel.B - 255)
+                        );
+
+                    invertBitmap.SetPixel(x, y, invertedColor);
+                }
+            }
+
+            return invertBitmap;
         }
 
         #endregion

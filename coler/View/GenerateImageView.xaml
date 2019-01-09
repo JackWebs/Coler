@@ -7,6 +7,8 @@
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:viewModel="clr-namespace:coler.ViewModel"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:win32="clr-namespace:Microsoft.Win32;assembly=PresentationFramework"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{Binding GenerateImageViewModel, Source={StaticResource Locator}}">
@@ -22,10 +24,6 @@
         </Style>
 
     </UserControl.Resources>
-
-    <!--<dxmvvm:Interaction.Behaviors>
-        <dxmvvm:OpenFileDialogService Title="{Binding Title}"/>
-    </dxmvvm:Interaction.Behaviors>-->
 
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
@@ -99,6 +97,17 @@
                                        Margin="0,0,20,0"/>
 
                                 <CheckBox Width="25" Height="25" IsChecked="{Binding UseTemplate, Mode=TwoWay}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+
+                                <Label Content="Invert Template" 
+                                       VerticalAlignment="Center"
+                                       Height="25"
+                                       Margin="0,0,20,0"/>
+
+                                <CheckBox Width="25" Height="25" IsChecked="{Binding InvertTemplate, Mode=TwoWay}"/>
 
                             </StackPanel>
 
@@ -240,12 +249,13 @@
 
         <Border Grid.Column="1"
                 BorderThickness="2"
-                BorderBrush="Black">
+                BorderBrush="Black"
+                Background="LightGray">
 
             <Image HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    Stretch="Uniform"
-                   SnapsToDevicePixels="False"
+                   SnapsToDevicePixels="True"
                    RenderOptions.BitmapScalingMode="{Binding SelectedScalingMode}"
                    Margin="0" Source="{Binding CurrentImage.FilePath}"/>
 
