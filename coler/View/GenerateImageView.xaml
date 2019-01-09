@@ -1,0 +1,255 @@
+﻿<UserControl x:Class="coler.View.GenerateImageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:coler.View"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:viewModel="clr-namespace:coler.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             DataContext="{Binding GenerateImageViewModel, Source={StaticResource Locator}}">
+
+    <UserControl.Resources>
+
+        <Style x:Key="ConfigBorderStyle" TargetType="{x:Type Border}">
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Margin" Value="0,0,10,10"/>
+        </Style>
+
+    </UserControl.Resources>
+
+    <!--<dxmvvm:Interaction.Behaviors>
+        <dxmvvm:OpenFileDialogService Title="{Binding Title}"/>
+    </dxmvvm:Interaction.Behaviors>-->
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="0,20,0,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0">
+
+                <Button Content="Refresh" Width="80" Height="30" Margin="0,0,0,20" Command="{Binding RefreshGridCommand}"/>
+
+                <Button Content="Redraw" Width="80" Height="30" Margin="0,0,0,20" Command="{Binding RedrawGridCommand}"/>
+
+                <Button Content="Regen" Width="80" Height="30" Margin="0,0,0,20" Command="{Binding GenerateImageCommand}"/>
+
+                <StackPanel Margin="0,0,0,20" HorizontalAlignment="Center" Orientation="Horizontal">
+                    <StackPanel.Style>
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding LoadingCells}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <Label Content="Loading Cells..." Margin="0,0,20,0"/>
+                    <Label Content="{Binding CellsLoaded}"/>
+                    <Label Content=" / "/>
+                    <Label Content="{Binding CellsToLoad}"/>
+                </StackPanel>
+
+                <ComboBox ItemsSource="{Binding ScalingModes}" SelectedItem="{Binding SelectedScalingMode}"
+                          Margin="0,0,0,20" HorizontalAlignment="Center"/>
+
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1" 
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto">
+
+                <StackPanel>
+
+                    <!--Template-->
+                    <Border Style="{StaticResource ConfigBorderStyle}">
+
+                        <StackPanel>
+
+                            <Button Command="{Binding SelectTemplateCommand}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border BorderThickness="1" BorderBrush="Black">
+                                            <Label Content="{Binding TemplateName,Mode=OneWay}"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+
+                                <Label Content="Use Template" 
+                                       VerticalAlignment="Center"
+                                       Height="25"
+                                       Margin="0,0,20,0"/>
+
+                                <CheckBox Width="25" Height="25" IsChecked="{Binding UseTemplate, Mode=TwoWay}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+
+                                <StackPanel>
+
+                                    <TextBox Text="{Binding MaskWidth}"/>
+
+                                    <Label Content="W" 
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Bottom"/>
+
+                                </StackPanel>
+
+                                <StackPanel>
+
+                                    <Label Content="x" 
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Bottom"/>
+
+                                </StackPanel>
+
+                                <StackPanel>
+
+                                    <TextBox Text="{Binding MaskHeight}"/>
+
+                                    <Label Content="H" 
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Bottom"/>
+
+                                </StackPanel>
+
+                            </StackPanel>
+
+                        </StackPanel>
+
+                    </Border>
+
+                    <!--ColorGen Function-->
+                    <Border Style="{StaticResource ConfigBorderStyle}">
+
+                        <StackPanel>
+
+                            <Label Content="Gen. Type" 
+                           VerticalAlignment="Center"
+                           Margin="0,0,0,10"/>
+
+                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding GenType, Mode=TwoWay}"/>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+
+                                <Label Content="Random Parameters" 
+                               VerticalAlignment="Center"
+                               Height="25"
+                               Margin="0,0,20,0"/>
+
+                                <CheckBox Width="25" Height="25" IsChecked="{Binding RandomizeParameters, Mode=TwoWay}"/>
+
+                            </StackPanel>
+
+                        </StackPanel>
+
+                    </Border>
+
+                    <Border Style="{StaticResource ConfigBorderStyle}">
+                        <StackPanel Margin="0,0,0,0">
+
+                            <Label Content="Red Parameter" 
+                           VerticalAlignment="Center"
+                           Margin="0,0,0,10"/>
+
+                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding RedParameter, Mode=TwoWay}"/>
+
+                            <Label Content="Green Parameter" 
+                           VerticalAlignment="Center"
+                           Margin="0,0,0,10"/>
+
+                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding GreenParameter, Mode=TwoWay}"/>
+
+                            <Label Content="Blue Parameter" 
+                           VerticalAlignment="Center"
+                           Margin="0,0,0,10"/>
+
+                            <TextBox Width="50" Margin="0,0,0,0" Text="{Binding BlueParameter, Mode=TwoWay}"/>
+
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource ConfigBorderStyle}">
+                        <StackPanel Margin="0,0,0,0">
+
+                            <Label Content="X Parameter" 
+                           VerticalAlignment="Center"
+                           Margin="0,0,0,10"/>
+
+                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding XParameter, Mode=TwoWay}"/>
+
+                            <Label Content="Y Parameter" 
+                           VerticalAlignment="Center"
+                           Margin="0,0,0,10"/>
+
+                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding YParameter, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource ConfigBorderStyle}">
+
+                        <StackPanel>
+
+                            <Label Content="CellSize" 
+                           VerticalAlignment="Center"/>
+
+                            <TextBox Width="50" Text="{Binding CellSize, Mode=TwoWay}"
+                             Margin="0,0,0,20"/>
+
+                            <Label Content="Width" 
+                           VerticalAlignment="Center"/>
+
+                            <TextBox Width="50" Text="{Binding Width, Mode=TwoWay}"
+                             Margin="0,0,0,20"/>
+
+                            <Label Content="Height" 
+                           VerticalAlignment="Center"/>
+
+                            <TextBox Width="50" Text="{Binding Height, Mode=TwoWay}"/>
+
+                        </StackPanel>
+
+                    </Border>
+
+                    <!--<dxe:ColorEdit Color="{Binding SelectedColor, Mode=TwoWay}" ShowMoreColorsButton="True"/>-->
+
+                </StackPanel>
+
+            </ScrollViewer>
+
+        </Grid>
+
+        <Border Grid.Column="1"
+                BorderThickness="2"
+                BorderBrush="Black">
+
+            <Image HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Stretch="Uniform"
+                   SnapsToDevicePixels="False"
+                   RenderOptions.BitmapScalingMode="{Binding SelectedScalingMode}"
+                   Margin="0" Source="{Binding CurrentImage.FilePath}"/>
+
+        </Border>
+
+    </Grid>
+</UserControl>
