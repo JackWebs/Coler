@@ -1,7 +1,9 @@
 ﻿using System;
+using coler.Model;
+using coler.Model.ColorGen;
 using coler.Model.Enum;
 
-namespace coler.Model.ColorGen.Functions
+namespace coler.BusinessLogic.ColorGenFunctions
 {
     public class ColorGen4 : ColorGenBase, IColorGenFunction
     {

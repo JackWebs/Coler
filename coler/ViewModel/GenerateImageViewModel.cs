@@ -476,11 +476,13 @@ namespace coler.ViewModel
         public void GenerateImage()
         {
             var dateTimeNow = DateTime.Now;
+            var fileName = dateTimeNow.ToString("yyyy-MM-dd hh-mm-ss") + ".png";
 
             var genImage = new GenImage
             {
                 DateCreated = dateTimeNow,
-                FilePath = Path.Combine(FilePaths.BufferDirectory, dateTimeNow.ToString("yyyy-MM-dd hh-mm-ss") + ".png")
+                SourceFilePath = Path.Combine(FilePaths.BufferDirectory, fileName),
+                ThumbnailFilePath = Path.Combine(FilePaths.ThumbnailDirectory, fileName),     
             };
 
             using (Bitmap image = new Bitmap(Width, Height))
@@ -503,11 +505,11 @@ namespace coler.ViewModel
                     SetPixelColor(image, mask, point);
                 }
 
-                var x = Utils.Transparent2Color(image, BackgroundColor);
+                Bitmap finalImage = Utils.Transparent2Color(image, BackgroundColor);
 
-                x.Save(genImage.FilePath, ImageFormat.Png);
+                finalImage.Save(genImage.SourceFilePath, ImageFormat.Png);
 
-                mask = null;
+                Utils.ResizeImage(finalImage, 0.5).Save(genImage.ThumbnailFilePath, ImageFormat.Png);
             }
 
             Application.Current.Dispatcher.Invoke(() =>

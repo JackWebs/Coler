@@ -9,6 +9,7 @@
              xmlns:viewModel="clr-namespace:coler.ViewModel"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:win32="clr-namespace:Microsoft.Win32;assembly=PresentationFramework"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{Binding GenerateImageViewModel, Source={StaticResource Locator}}">
@@ -239,7 +240,7 @@
 
                     </Border>
 
-                    <!--<dxe:ColorEdit Color="{Binding SelectedColor, Mode=TwoWay}" ShowMoreColorsButton="True"/>-->
+                    <xctk:ColorPicker ColorMode="ColorCanvas" SelectedColor="{Binding SelectedColor, Mode=TwoWay}"/>
 
                 </StackPanel>
 
@@ -257,7 +258,7 @@
                    Stretch="Uniform"
                    SnapsToDevicePixels="True"
                    RenderOptions.BitmapScalingMode="{Binding SelectedScalingMode}"
-                   Margin="0" Source="{Binding CurrentImage.FilePath}"/>
+                   Margin="0" Source="{Binding CurrentImage.SourceFilePath}"/>
 
         </Border>
 

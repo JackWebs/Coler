@@ -11,20 +11,7 @@ namespace coler
     {
         public App()
         {
-            CreateDirectoryIfNotExist(FilePaths.RootImageDirectory);
-            CreateDirectoryIfNotExist(FilePaths.BufferDirectory);
-            CreateDirectoryIfNotExist(FilePaths.TemplateDirectory);
-
-            CreateDirectoryIfNotExist(FilePaths.RootFileDirectory);
-            CreateDirectoryIfNotExist(FilePaths.ConfigDirectory);
-        }
-
-        private void CreateDirectoryIfNotExist(string directory)
-        {
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
+            FilePaths.CreateDirectories();
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using coler.BusinessLogic.ColorGenFunctions;
 using coler.Model;
 using coler.Model.ColorGen;
-using coler.Model.ColorGen.Functions;
 using coler.Model.Enum;
 
 namespace coler.BusinessLogic
