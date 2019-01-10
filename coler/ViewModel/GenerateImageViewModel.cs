@@ -61,6 +61,8 @@ namespace coler.ViewModel
         private Color _selectedColor = Color.FromRgb(255, 255, 255);
         private int _maskWidth;
         private int _maskHeight;
+        private int _originalMaskWidth;
+        private int _originalMaskHeight;
 
         #endregion
 
@@ -157,6 +159,7 @@ namespace coler.ViewModel
             {
                 if (value == _width) return;
                 _width = value;
+
                 OnPropertyChanged();
             }
         }
@@ -179,7 +182,13 @@ namespace coler.ViewModel
             {
                 if (value == _maskWidth) return;
                 _maskWidth = value;
+
+                var scale = (double)_maskWidth / OriginalMaskWidth;
+
+                _maskHeight = (int)(OriginalMaskHeight * scale);
+
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(MaskHeight));
             }
         }
 
@@ -190,7 +199,41 @@ namespace coler.ViewModel
             {
                 if (value == _maskHeight) return;
                 _maskHeight = value;
+
+                var scale = (double)_maskHeight / OriginalMaskHeight;
+
+                _maskWidth = (int)(OriginalMaskWidth * scale);
+
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(MaskWidth));
+            }
+        }
+
+        public int OriginalMaskWidth
+        {
+            get => _originalMaskWidth;
+            set
+            {
+                if (value == _originalMaskWidth) return;
+                _originalMaskWidth = value;
+                _maskWidth = value;
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(MaskWidth));
+            }
+        }
+
+        public int OriginalMaskHeight
+        {
+            get => _originalMaskHeight;
+            set
+            {
+                if (value == _originalMaskHeight) return;
+                _originalMaskHeight = value;
+                _maskHeight = value;
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(MaskHeight));
             }
         }
 
@@ -482,7 +525,7 @@ namespace coler.ViewModel
             {
                 DateCreated = dateTimeNow,
                 SourceFilePath = Path.Combine(FilePaths.BufferDirectory, fileName),
-                ThumbnailFilePath = Path.Combine(FilePaths.ThumbnailDirectory, fileName),     
+                ThumbnailFilePath = Path.Combine(FilePaths.ThumbnailDirectory, fileName),
             };
 
             using (Bitmap image = new Bitmap(Width, Height))
@@ -536,8 +579,8 @@ namespace coler.ViewModel
             try
             {
                 Bitmap template = new Bitmap(TemplatePath);
-                MaskWidth = template.Width;
-                MaskHeight = template.Height;
+                OriginalMaskWidth = template.Width;
+                OriginalMaskHeight = template.Height;
             }
             catch (Exception ex)
             {
@@ -659,6 +702,8 @@ namespace coler.ViewModel
             {
                 return mask;
             }
+
+            template = Utils.ResizeImage(template, MaskWidth, MaskHeight);
 
             mask = new Bitmap(Width, Height);
 
