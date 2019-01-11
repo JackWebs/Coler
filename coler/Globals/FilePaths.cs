@@ -8,7 +8,8 @@ namespace coler.Globals
         public static string UserPictures { get; } = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
         public static string RootImageDirectory { get; } = Path.Combine(UserPictures, @"Coler Images");
         public static string BufferDirectory { get; } = Path.Combine(RootImageDirectory, "Image Buffer");
-        public static string TemplateDirectory { get; } = Path.Combine(RootImageDirectory, "Image Templates");
+        public static string TemplateDirectory { get; } = Path.Combine(RootImageDirectory, "Templates");
+        public static string SavedImageDirectory { get; } = Path.Combine(RootImageDirectory, "Saved Images");
 
         public static string AppData { get; } = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         public static string RootFileDirectory { get; } = Path.Combine(AppData, @"ColerApp");
@@ -29,6 +30,7 @@ namespace coler.Globals
             CreateDirectory(RootImageDirectory);
             CreateDirectory(BufferDirectory);
             CreateDirectory(TemplateDirectory);
+            CreateDirectory(SavedImageDirectory);
 
             CreateDirectory(RootFileDirectory);
             CreateDirectory(ConfigDirectory);

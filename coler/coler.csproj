@@ -130,6 +130,7 @@
     <Compile Include="Model\ColorGen\IColorGenFunction.cs" />
     <Compile Include="Model\GenImage\GenImage.cs" />
     <Compile Include="Model\GenImage\GenImageList.cs" />
+    <Compile Include="Model\GenImage\GenImageUi.cs" />
     <Compile Include="Model\PixelData.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel\GenerateImageViewModel.cs" />

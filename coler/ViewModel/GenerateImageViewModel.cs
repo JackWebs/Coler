@@ -518,15 +518,7 @@ namespace coler.ViewModel
 
         public void GenerateImage()
         {
-            var dateTimeNow = DateTime.Now;
-            var fileName = dateTimeNow.ToString("yyyy-MM-dd hh-mm-ss") + ".png";
-
-            var genImage = new GenImage
-            {
-                DateCreated = dateTimeNow,
-                SourceFilePath = Path.Combine(FilePaths.BufferDirectory, fileName),
-                ThumbnailFilePath = Path.Combine(FilePaths.ThumbnailDirectory, fileName),
-            };
+            var genImage = new GenImage(DateTime.Now);
 
             using (Bitmap image = new Bitmap(Width, Height))
             {

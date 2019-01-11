@@ -33,7 +33,7 @@ namespace coler.BusinessLogic
             RemoveBrokenImages();
             FixThumbnails();
         }
-        
+
         public ObservableCollection<GenImage> GetImageList()
         {
             return ImageList.Images;
@@ -55,6 +55,32 @@ namespace coler.BusinessLogic
             SaveConfigFile();
         }
 
+        public void SaveImage(GenImage genImage)
+        {
+            if (File.Exists(genImage.SourceFilePath))
+            {
+                var oldSourceFilePath = genImage.SourceFilePath;
+
+                genImage.SourceFilePath = Path.Combine(FilePaths.SavedImageDirectory, genImage.FileName);
+                File.Move(oldSourceFilePath, genImage.SourceFilePath);
+
+                genImage.Saved = true;
+            }
+
+            SaveConfigFile();
+        }
+
+        public void DeleteImage(GenImage genImage)
+        {
+            if (File.Exists(genImage.SourceFilePath))
+            {
+                File.Delete(genImage.SourceFilePath);
+            }
+
+            ImageList.Images.Remove(genImage);
+            SaveConfigFile();   
+        }
+
         private void RemoveBrokenImages()
         {
             var imageList = GetImageList();
@@ -73,13 +99,9 @@ namespace coler.BusinessLogic
         {
             foreach(var genImage in GetImageList())
             {
-                if (!string.IsNullOrEmpty(genImage.ThumbnailFilePath)) continue;
+                if (File.Exists(genImage.ThumbnailFilePath)) continue;
 
                 var image = new Bitmap(genImage.SourceFilePath);
-                var fileName = genImage.DateCreated.ToString("yyyy-MM-dd hh-mm-ss") + ".png";
-
-                genImage.ThumbnailFilePath = Path.Combine(FilePaths.ThumbnailDirectory, fileName);
-
                 Utils.ResizeImage(image, 0.5).Save(genImage.ThumbnailFilePath, ImageFormat.Png);
             }
         }
