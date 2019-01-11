@@ -96,13 +96,13 @@
         </ScrollViewer>
 
         <UniformGrid Grid.Row="2"
-                     Rows="1" Columns="3">
+                     Rows="1" Columns="3" Margin="-10,0">
 
-            <Button Content="Save" Command="{Binding SaveImagesCommand}"/>
+            <Button Content="Save" Command="{Binding SaveImagesCommand}" Margin="10,20" Height="50"/>
 
-            <ToggleButton Content="Show Saved" IsChecked="{Binding ShowSavedImages}"/>
+            <ToggleButton Content="Show Saved" IsChecked="{Binding ShowSavedImages}" Margin="10,20" Height="50"/>
 
-            <Button Content="Delete" Command="{Binding DeleteImagesCommand}"/>
+            <Button Content="Delete" Command="{Binding DeleteImagesCommand}" Margin="10,20" Height="50"/>
 
         </UniformGrid>
     </Grid>
