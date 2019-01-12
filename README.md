@@ -1,2 +1,2 @@
 # Coler
-WPF application exploring image generation
+WPF application exploring image generation.
