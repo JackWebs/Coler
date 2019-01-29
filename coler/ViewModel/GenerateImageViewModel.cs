@@ -503,12 +503,13 @@ namespace coler.ViewModel
             {
                 LoadingCells = true;
 
-                foreach (var point in Points)
-                {
-                    SetPointColor(point);
+                Parallel.ForEach(Points, point =>
+                    {
+                        SetPointColor(point);
 
-                    CellsLoaded++;
-                }
+                        CellsLoaded++;
+                    }
+                );
 
                 LoadingCells = false;
 
