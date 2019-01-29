@@ -40,10 +40,10 @@ namespace coler.Globals
             }
         }
 
-        public static Bitmap Transparent2Color(Bitmap bmp1, System.Drawing.Color target)
+        public static Bitmap Transparent2Color(Bitmap bmp1, Color target)
         {
             Bitmap bmp2 = new Bitmap(bmp1.Width, bmp1.Height);
-            Rectangle rect = new Rectangle(System.Drawing.Point.Empty, bmp1.Size);
+            Rectangle rect = new Rectangle(Point.Empty, bmp1.Size);
             using (Graphics g = Graphics.FromImage(bmp2))
             {
                 g.Clear(target);
@@ -110,6 +110,26 @@ namespace coler.Globals
             }
 
             return destImage;
+        }
+
+        public static void CreateDirectories()
+        {
+            void CreateDirectory(string directory)
+            {
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+            }
+
+            CreateDirectory(Constants.RootImageDirectory);
+            CreateDirectory(Constants.BufferDirectory);
+            CreateDirectory(Constants.TemplateDirectory);
+            CreateDirectory(Constants.SavedImageDirectory);
+
+            CreateDirectory(Constants.RootFileDirectory);
+            CreateDirectory(Constants.ConfigDirectory);
+            CreateDirectory(Constants.ThumbnailDirectory);
         }
     }
 }

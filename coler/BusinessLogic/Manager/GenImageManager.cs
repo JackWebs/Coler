@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using coler.Globals;
 using coler.Model.GenImage;
 
-namespace coler.BusinessLogic
+namespace coler.BusinessLogic.Manager
 {
     public class GenImageManager
     {
@@ -28,7 +27,7 @@ namespace coler.BusinessLogic
 
         public GenImageManager()
         {
-            ImageList = !File.Exists(FilePaths.GenImageListFilePath) ? new GenImageList() : ReadConfigFile();
+            ImageList = !File.Exists(Constants.GenImageListFilePath) ? new GenImageList() : ReadConfigFile();
 
             RemoveBrokenImages();
             FixThumbnails();
@@ -41,12 +40,12 @@ namespace coler.BusinessLogic
 
         private GenImageList ReadConfigFile()
         {
-            return Utils.DeserializeXml<GenImageList>(FilePaths.GenImageListFilePath);
+            return Utils.DeserializeXml<GenImageList>(Constants.GenImageListFilePath);
         }
 
         private void SaveConfigFile()
         {
-            Utils.SerializeToXml(ImageList, FilePaths.GenImageListFilePath);
+            Utils.SerializeToXml(ImageList, Constants.GenImageListFilePath);
         }
 
         public void AddImage(GenImage genImage)
@@ -61,7 +60,7 @@ namespace coler.BusinessLogic
             {
                 var oldSourceFilePath = genImage.SourceFilePath;
 
-                genImage.SourceFilePath = Path.Combine(FilePaths.SavedImageDirectory, genImage.FileName);
+                genImage.SourceFilePath = Path.Combine(Constants.SavedImageDirectory, genImage.FileName);
                 File.Move(oldSourceFilePath, genImage.SourceFilePath);
 
                 genImage.Saved = true;

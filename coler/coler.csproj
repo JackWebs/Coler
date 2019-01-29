@@ -115,19 +115,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BusinessLogic\ColorGenManager.cs" />
-    <Compile Include="BusinessLogic\GenImageManager.cs" />
-    <Compile Include="Globals\FilePaths.cs" />
+    <Compile Include="BusinessLogic\Manager\ColorGenManager.cs" />
+    <Compile Include="BusinessLogic\Manager\GenImageManager.cs" />
+    <Compile Include="Globals\Constants.cs" />
     <Compile Include="Globals\Utils.cs" />
     <Compile Include="Globals\ViewModelLocator.cs" />
-    <Compile Include="BusinessLogic\ColorGenFunctions\ColorGen5.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen5.cs" />
     <Compile Include="Model\Enum\EnColor.cs" />
-    <Compile Include="BusinessLogic\ColorGenFunctions\ColorGen4.cs" />
-    <Compile Include="BusinessLogic\ColorGenFunctions\ColorGen3.cs" />
-    <Compile Include="BusinessLogic\ColorGenFunctions\ColorGen1.cs" />
-    <Compile Include="BusinessLogic\ColorGenFunctions\ColorGen2.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen4.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen3.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen1.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen2.cs" />
     <Compile Include="Model\ColorGen\ColorGenBase.cs" />
-    <Compile Include="Model\ColorGen\IColorGenFunction.cs" />
+    <Compile Include="Model\ColorGen\Interface\IColorGenFunction.cs" />
     <Compile Include="Model\GenImage\GenImage.cs" />
     <Compile Include="Model\GenImage\GenImageList.cs" />
     <Compile Include="Model\GenImage\GenImageUi.cs" />

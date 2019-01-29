@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using coler.Annotations;
 using coler.BusinessLogic;
+using coler.BusinessLogic.Manager;
 using coler.Model.GenImage;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;

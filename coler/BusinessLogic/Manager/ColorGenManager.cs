@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using coler.BusinessLogic.ColorGenFunctions;
+using coler.BusinessLogic.Subsystems.ColorGenFunctions;
 using coler.Model;
 using coler.Model.ColorGen;
 using coler.Model.Enum;
 
-namespace coler.BusinessLogic
+namespace coler.BusinessLogic.Manager
 {
     public class ColorGenManager
     {
@@ -25,7 +25,7 @@ namespace coler.BusinessLogic
         }
 
         public List<IColorGenFunction> ColorGens { get; set; }
-        public List<PixelData> Points { get; set; }
+        public PixelData[][] Points { get; set; }
 
         public ColorGenManager()
         {
@@ -37,8 +37,6 @@ namespace coler.BusinessLogic
                 new ColorGen4(),
                 new ColorGen5(),
             };
-
-            Points = new List<PixelData>();
         }
 
         public IColorGenFunction GetColorGen(int id)
@@ -48,7 +46,7 @@ namespace coler.BusinessLogic
 
         public int GetPointColor(int x, int y, EnColor color)
         {
-            var selectedPoint = Points.FirstOrDefault(point => point.CoordX == x && point.CoordY == y);
+            var selectedPoint = GetPoint(x, y);
 
             if (selectedPoint == null) return 0;
 
@@ -69,6 +67,17 @@ namespace coler.BusinessLogic
                 default:
                     throw new ArgumentOutOfRangeException(nameof(color), color, null);
             }
+        }
+
+        public PixelData GetPoint(int x, int y)
+        {
+            if (x > Points.Length) return null;
+
+            var column = Points[x];
+
+            if (y > column.Length) return null;
+
+            return column[y];
         }
     }
 }

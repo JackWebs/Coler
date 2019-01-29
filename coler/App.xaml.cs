@@ -11,7 +11,7 @@ namespace coler
     {
         public App()
         {
-            FilePaths.CreateDirectories();
+            Utils.CreateDirectories();
         }
     }
 }

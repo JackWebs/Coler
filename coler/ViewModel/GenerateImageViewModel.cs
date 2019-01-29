@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using coler.Annotations;
 using coler.BusinessLogic;
+using coler.BusinessLogic.Manager;
 using coler.Globals;
 using coler.Model.ColorGen;
 using coler.Model.Enum;
@@ -24,7 +25,7 @@ using PixelData = coler.Model.PixelData;
 
 namespace coler.ViewModel
 {
-    public class GenerateImageViewModel : ViewModelBase, INotifyPropertyChanged
+    public class GenerateImageViewModel : ViewModelBase
     {
         #region Fields
 
@@ -33,16 +34,21 @@ namespace coler.ViewModel
 
         private int _seed;
 
+        public enum EnPointUpdateType
+        {
+            Refresh,
+            Draw
+        };
+
         #region Backing Fields
 
-        private List<PixelData> _points;
+        private PixelData[][] _points;
 
-        private double _cellSize = 2;
+        private double _xParameter = 1;
+        private double _yParameter = 1;
 
         private int _width = 1920;
         private int _height = 1080;
-        private double _xParameter = 1;
-        private double _yParameter = 1;
         private int _genType;
 
         private bool _randomizeParameters;
@@ -70,18 +76,16 @@ namespace coler.ViewModel
 
         #region Properties
 
-        public List<PixelData> Points
+        public PixelData[][] Points
         {
             get => _points;
             set
             {
                 if (Equals(value, _points)) return;
                 _points = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
-
-        public IColorGenFunction SelectedColorGen { get; set; }
 
         public BitmapScalingMode SelectedScalingMode
         {
@@ -90,7 +94,7 @@ namespace coler.ViewModel
             {
                 if (value == _selectedScalingMode) return;
                 _selectedScalingMode = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -101,7 +105,7 @@ namespace coler.ViewModel
             {
                 if (Equals(value, _scalingModes)) return;
                 _scalingModes = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -112,8 +116,8 @@ namespace coler.ViewModel
             {
                 if (value.Equals(_selectedColor)) return;
                 _selectedColor = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(BackgroundColor));
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(BackgroundColor));
             }
         }
 
@@ -123,7 +127,7 @@ namespace coler.ViewModel
             set
             {
                 _imageSource = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -134,21 +138,30 @@ namespace coler.ViewModel
             {
                 if (value == _templatePath) return;
                 _templatePath = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(TemplateName));
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(TemplateName));
             }
         }
 
-        public string LastCreatedImagePath { get; set; }
-
-        public double CellSize
+        public double XParameter
         {
-            get => _cellSize;
+            get => _xParameter;
             set
             {
-                if (value.Equals(_cellSize)) return;
-                _cellSize = value;
-                OnPropertyChanged();
+                if (Math.Abs(value - _xParameter) < Constants.DoubleEqualityTolerance) return;
+                _xParameter = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public double YParameter
+        {
+            get => _yParameter;
+            set
+            {
+                if (Math.Abs(value - _yParameter) < Constants.DoubleEqualityTolerance) return;
+                _yParameter = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -160,7 +173,7 @@ namespace coler.ViewModel
                 if (value == _width) return;
                 _width = value;
 
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -171,7 +184,7 @@ namespace coler.ViewModel
             {
                 if (value == _height) return;
                 _height = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -187,8 +200,8 @@ namespace coler.ViewModel
 
                 _maskHeight = (int)(OriginalMaskHeight * scale);
 
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(MaskHeight));
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(MaskHeight));
             }
         }
 
@@ -204,8 +217,8 @@ namespace coler.ViewModel
 
                 _maskWidth = (int)(OriginalMaskWidth * scale);
 
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(MaskWidth));
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(MaskWidth));
             }
         }
 
@@ -218,8 +231,8 @@ namespace coler.ViewModel
                 _originalMaskWidth = value;
                 _maskWidth = value;
 
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(MaskWidth));
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(MaskWidth));
             }
         }
 
@@ -232,30 +245,8 @@ namespace coler.ViewModel
                 _originalMaskHeight = value;
                 _maskHeight = value;
 
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(MaskHeight));
-            }
-        }
-
-        public double XParameter
-        {
-            get => _xParameter;
-            set
-            {
-                if (value == _xParameter) return;
-                _xParameter = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public double YParameter
-        {
-            get => _yParameter;
-            set
-            {
-                if (value == _yParameter) return;
-                _yParameter = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(MaskHeight));
             }
         }
 
@@ -266,7 +257,7 @@ namespace coler.ViewModel
             {
                 if (value == _genType) return;
                 _genType = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -277,7 +268,7 @@ namespace coler.ViewModel
             {
                 if (value == _redParameter) return;
                 _redParameter = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -288,7 +279,7 @@ namespace coler.ViewModel
             {
                 if (value == _greenParameter) return;
                 _greenParameter = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -299,7 +290,7 @@ namespace coler.ViewModel
             {
                 if (value == _blueParameter) return;
                 _blueParameter = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -310,7 +301,7 @@ namespace coler.ViewModel
             {
                 if (value == _cellsLoaded) return;
                 _cellsLoaded = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -321,7 +312,7 @@ namespace coler.ViewModel
             {
                 if (value == _cellsToLoad) return;
                 _cellsToLoad = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -332,7 +323,7 @@ namespace coler.ViewModel
             {
                 if (value == _randomizeParameters) return;
                 _randomizeParameters = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -343,7 +334,7 @@ namespace coler.ViewModel
             {
                 if (value == _loadingCells) return;
                 _loadingCells = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -354,7 +345,7 @@ namespace coler.ViewModel
             {
                 if (value == _useTemplate) return;
                 _useTemplate = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -365,7 +356,7 @@ namespace coler.ViewModel
             {
                 if (value == _invertTemplate) return;
                 _invertTemplate = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -373,9 +364,9 @@ namespace coler.ViewModel
 
         #region Getter Properties
 
-        public string TemplateName => string.IsNullOrWhiteSpace(TemplatePath) ? "" : TemplatePath.Split('\\').Last();
+        public IColorGenFunction SelectedColorGen => _colorGenManager.GetColorGen(GenType);
 
-        public double ActualImageWidth => Width * CellSize;
+        public string TemplateName => string.IsNullOrWhiteSpace(TemplatePath) ? "" : TemplatePath.Split('\\').Last();
 
         public System.Drawing.Color BackgroundColor => System.Drawing.Color.FromArgb(SelectedColor.R, SelectedColor.G, SelectedColor.B);
 
@@ -387,8 +378,6 @@ namespace coler.ViewModel
         public string Title { get; set; } = "Select Template";
 
         public bool DialogResult { get; protected set; }
-
-        //protected IOpenFileDialogService OpenFileDialogService => GetService<IOpenFileDialogService>();
 
         #endregion
 
@@ -445,44 +434,7 @@ namespace coler.ViewModel
 
         public void RefreshGrid()
         {
-            Points.Clear();
-
-            var points = new List<PixelData>();
-
-            UpdateGenType();
-
-            SelectedColorGen?.UpdateDimensions(Width, Height);
-            SelectedColorGen?.UpdateParameters(XParameter, YParameter);
-
-            CellsLoaded = 0;
-            CellsToLoad = Width * Height;
-
-            Task.Run(() =>
-            {
-                LoadingCells = true;
-
-                for (var y = 0; y < Height; y++)
-                {
-                    for (var x = 0; x < Width; x++)
-                    {
-                        var point = new PixelData
-                        {
-                            CoordX = x,
-                            CoordY = y,
-                        };
-
-                        points.Add(point);
-
-                        CellsLoaded++;
-                    }
-                }
-
-                Points.AddRange(points);
-
-                OnPropertyChanged(nameof(ActualImageWidth));
-
-                LoadingCells = false;
-            });
+            UpdateGrid(EnPointUpdateType.Refresh);
         }
 
         public void RedrawGrid()
@@ -491,29 +443,7 @@ namespace coler.ViewModel
 
             _seed = rand.Next(0, 1000000);
 
-            UpdateGenType();
-
-            SelectedColorGen?.UpdateDimensions(Width, Height);
-            SelectedColorGen?.UpdateParameters(XParameter, YParameter);
-
-            CellsLoaded = 0;
-            CellsToLoad = Width * Height;
-
-            Task.Run(() =>
-            {
-                LoadingCells = true;
-
-                foreach (var point in Points)
-                {
-                    SetPointColor(point);
-
-                    CellsLoaded++;
-                }
-
-                LoadingCells = false;
-
-                GenerateImage();
-            });
+            UpdateGrid(EnPointUpdateType.Draw);
         }
 
         public void GenerateImage()
@@ -535,9 +465,12 @@ namespace coler.ViewModel
 
                 UseTemplate = UseTemplate && mask != null;
 
-                foreach (var point in Points)
+                foreach (var column in Points)
                 {
-                    SetPixelColor(image, mask, point);
+                    foreach (var point in column)
+                    {
+                        SetPixelColor(image, mask, point);
+                    }
                 }
 
                 Bitmap finalImage = Utils.Transparent2Color(image, BackgroundColor);
@@ -560,7 +493,7 @@ namespace coler.ViewModel
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Template Images(*.png; *.jpg)|*.png; *.jpg",
-                InitialDirectory = FilePaths.TemplateDirectory
+                InitialDirectory = Constants.TemplateDirectory
             };
 
             if (openFileDialog.ShowDialog() == true)
@@ -584,16 +517,19 @@ namespace coler.ViewModel
 
         #region Private Methods
 
-        private void SetPointColor(PixelData point)
+        private void SetPointColor(PixelData point, Random rng = null)
         {
             var x = point.CoordX;
             var y = point.CoordY;
 
-            var rng = new Random(_seed);
+            if (rng == null)
+            {
+                rng = new Random(_seed);
+            }
 
-            int colorRed = 0;
-            int colorGreen = 0;
-            int colorBlue = 0;
+            int colorRed;
+            int colorGreen;
+            int colorBlue;
 
             if (GenType == 0)
             {
@@ -671,9 +607,84 @@ namespace coler.ViewModel
             }
         }
 
-        private void UpdateGenType()
+        private void UpdateGrid(EnPointUpdateType pointUpdateType)
         {
-            SelectedColorGen = _colorGenManager.GetColorGen(GenType);
+            SelectedColorGen?.UpdateDimensions(Width, Height);
+            SelectedColorGen?.UpdateParameters(XParameter, YParameter);
+
+            CellsLoaded = 0;
+            CellsToLoad = Width * Height;
+
+            Task.Run(() => UpdatePoints(pointUpdateType));
+        }
+
+        public void UpdatePoints(EnPointUpdateType pointUpdateType)
+        {
+            LoadingCells = true;
+
+            switch (pointUpdateType)
+            {
+                case EnPointUpdateType.Refresh:
+
+                    var points = new PixelData[Width][];
+
+                    for (var x = 0; x < Width; x++)
+                    {
+                        var column = new PixelData[Height];
+
+                        for (var y = 0; y < Height; y++)
+                        {
+                            var point = new PixelData
+                            {
+                                CoordX = x,
+                                CoordY = y,
+                            };
+
+                            column[y] = point;
+
+                            CellsLoaded++;
+                        }
+
+                        points[x] = column;
+                    }
+
+                    Points = points;
+
+                    break;
+
+                case EnPointUpdateType.Draw:
+
+                    var rng = new Random(_seed);
+
+                    Parallel.ForEach(Points, column =>
+                    {
+                        foreach (var point in column)
+                        {
+                            if (SelectedColorGen.Id == 5)
+                            {
+                                SetPointColor(point, rng);
+                            }
+                            else
+                            {
+                                SetPointColor(point);
+                            }
+
+                            CellsLoaded++;
+                        }
+                    });    
+
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(pointUpdateType), pointUpdateType, null);
+            }
+
+            LoadingCells = false;
+
+            if (pointUpdateType == EnPointUpdateType.Draw)
+            {
+                GenerateImage();
+            }
         }
 
         private Bitmap CreateMask()
@@ -720,14 +731,13 @@ namespace coler.ViewModel
             {
                 for (var y = 0; y < Height; y++)
                 {
-                    if (x > xOffset &&
-                        y > yOffset &&
-                        x < MaskWidth + xOffset &&
-                        y < MaskHeight + yOffset)
-                    {
-                        var templatePixel = template.GetPixel(x - xOffset, y - yOffset);
-                        mask.SetPixel(x, y, templatePixel);
-                    }
+                    if (x <= xOffset || 
+                        y <= yOffset || 
+                        x >= MaskWidth + xOffset || 
+                        y >= MaskHeight + yOffset) continue;
+
+                    var templatePixel = template.GetPixel(x - xOffset, y - yOffset);
+                    mask.SetPixel(x, y, templatePixel);
                 }
             }
 
@@ -765,18 +775,6 @@ namespace coler.ViewModel
         #region Events
 
 
-
-        #endregion
-
-        #region INotify
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         #endregion
     }

@@ -19,11 +19,11 @@ namespace coler.Model.GenImage
         public GenImage(DateTime dateCreated)
         {
             DateCreated = dateCreated;
-            SourceFilePath = Path.Combine(FilePaths.BufferDirectory, FileName);
+            SourceFilePath = Path.Combine(Constants.BufferDirectory, FileName);
         }
 
         [XmlIgnore]
-        public string ThumbnailFilePath => Path.Combine(FilePaths.ThumbnailDirectory, FileName);
+        public string ThumbnailFilePath => Path.Combine(Constants.ThumbnailDirectory, FileName);
         [XmlIgnore]
         public string FileName => DateCreated.ToString("yyyy-MM-dd hh-mm-ss") + ".png";
         [XmlIgnore]

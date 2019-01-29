@@ -219,12 +219,6 @@
 
                         <StackPanel>
 
-                            <Label Content="CellSize" 
-                           VerticalAlignment="Center"/>
-
-                            <TextBox Width="50" Text="{Binding CellSize, Mode=TwoWay}"
-                             Margin="0,0,0,20"/>
-
                             <Label Content="Width" 
                            VerticalAlignment="Center"/>
 
@@ -263,4 +257,5 @@
         </Border>
 
     </Grid>
+
 </UserControl>
