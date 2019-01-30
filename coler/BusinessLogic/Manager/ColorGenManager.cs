@@ -79,5 +79,23 @@ namespace coler.BusinessLogic.Manager
 
             return column[y];
         }
+
+        public void ClearPoints()
+        {
+            foreach (var column in Points)
+            {
+                foreach (var point in column)
+                {
+                    ResetPoint(point);
+                }
+            }
+        }
+
+        private void ResetPoint(PixelData point)
+        {
+            point.ColorRed = 0;
+            point.ColorGreen = 0;
+            point.ColorBlue = 0;
+        }
     }
 }

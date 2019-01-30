@@ -23,19 +23,23 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
             if (rng == null || point == null) return 0;
 
             var probability = 1 / (XParameter * XParameter);
-            var radius = YParameter;
 
             bool returnColor;
 
-            if (rng.NextDouble() < probability)
+            lock (rng)
             {
-                //CreateSquare(x, y, color, radius);
+                if (rng.NextDouble() < probability)
+                {
+                    var radius = rng.Next(0, (int) YParameter);
 
-                returnColor = true;
-            }
-            else
-            {
-                returnColor = false;
+                    CreateSquare(x, y, color, radius);
+
+                    returnColor = true;
+                }
+                else
+                {
+                    returnColor = false;
+                }
             }
 
             if (returnColor)
@@ -72,13 +76,69 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
             return existingColorValue;
         }
 
-        /*private void CreateSquare(int xCoord, int yCoord, EnColor color)
+        private void CreateSquare(int xCoord, int yCoord, EnColor color, int radius)
         {
             var colorManager = ColorGenManager.Instance;
             var points = colorManager.Points;
+
+            var width = points.Length;
+            var height = points[0].Length;
+
+            var xMin = Math.Max(0, xCoord - (radius + 1));
+            var yMin = Math.Max(0, yCoord - (radius + 1));
+
+            var xMax = Math.Min(width, xCoord + (radius + 1));
+            var yMax = Math.Min(height, yCoord + (radius + 1));
+
+            var selectedPoints = new List<PixelData>();
+
+            for (var x = xMin; x < xMax; x++)
+            {
+                for (var y = yMin; y < yMax; y++)
+                {
+                    selectedPoints.Add(points[x][y]);
+                }
+            }
+
+            foreach (var point in selectedPoints)
+            {
+                {
+                    //if (point.CoordX == xCoord && point.CoordY == yCoord) return;
+                    /*var xDiff = Math.Abs(xCoord - point.CoordX);
+                    var yDiff = Math.Abs(yCoord - point.CoordY);
+
+                    var diff = Math.Sqrt(Math.Abs(xDiff * xDiff - yDiff * yDiff)) / radius;
+                    var colorValue = (int)(255 * diff);*/
+                    var colorValue = 255;
+
+                    switch (color)
+                    {
+                        case EnColor.Red:
+
+                            point.ColorRed = colorValue;
+
+                            break;
+
+                        case EnColor.Green:
+
+                            point.ColorGreen = colorValue;
+
+                            break;
+
+                        case EnColor.Blue:
+
+                            point.ColorBlue = colorValue;
+
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(color), color, null);
+                    }
+                }
+            }
         }
 
-        private void CreateCircle(int xCoord, int yCoord, EnColor color, double radius)
+        /*private void CreateCircle(int xCoord, int yCoord, EnColor color, double radius)
         {
             var colorManager = ColorGenManager.Instance;
             var points = colorManager.Points;

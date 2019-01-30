@@ -83,6 +83,7 @@ namespace coler.ViewModel
             {
                 if (Equals(value, _points)) return;
                 _points = value;
+                _colorGenManager.Points = _points;
                 RaisePropertyChanged();
             }
         }
@@ -409,8 +410,6 @@ namespace coler.ViewModel
                 BitmapScalingMode.Fant
             };
 
-            Points = _colorGenManager.Points;
-
             InitializeCommands();
             InitializePoints();
         }
@@ -628,7 +627,7 @@ namespace coler.ViewModel
 
                     var points = new PixelData[Width][];
 
-                    for (var x = 0; x < Width; x++)
+                    Parallel.For(0, Width, x =>
                     {
                         var column = new PixelData[Height];
 
@@ -646,13 +645,15 @@ namespace coler.ViewModel
                         }
 
                         points[x] = column;
-                    }
+                    });
 
                     Points = points;
 
                     break;
 
                 case EnPointUpdateType.Draw:
+
+                    _colorGenManager.ClearPoints();
 
                     var rng = new Random(_seed);
 
