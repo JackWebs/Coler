@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using coler.BusinessLogic.Subsystems.ColorGenFunctions;
 using coler.Model;
 using coler.Model.ColorGen;
 using coler.Model.Enum;
@@ -24,25 +23,10 @@ namespace coler.BusinessLogic.Manager
             }   
         }
 
-        public List<IColorGenFunction> ColorGens { get; set; }
         public PixelData[][] Points { get; set; }
 
-        public ColorGenManager()
-        {
-            ColorGens = new List<IColorGenFunction>
-            {
-                new ColorGen1(),
-                new ColorGen2(),
-                new ColorGen3(),
-                new ColorGen4(),
-                new ColorGen5(),
-            };
-        }
-
-        public IColorGenFunction GetColorGen(int id)
-        {
-            return ColorGens.FirstOrDefault(x => x.Id == id);
-        }
+        public int CanvasWidth { get; set; } = 1920;
+        public int CanvasHeight { get; set; } = 1080;
 
         public int GetPointColor(int x, int y, EnColor color)
         {

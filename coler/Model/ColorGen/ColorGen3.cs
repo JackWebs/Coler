@@ -1,15 +1,14 @@
 ﻿using System;
-using coler.Model;
-using coler.Model.ColorGen;
+using System.Linq;
 using coler.Model.Enum;
 
-namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
+namespace coler.Model.ColorGen
 {
-    public class ColorGen4 : ColorGenBase, IColorGenFunction
+    /*public class ColorGen3 : ColorGenBase, IColorGenFunction
     {
-        public ColorGen4()
+        public ColorGen3()
         {
-            Id = 4;
+            Id = 3;
             ColorParameters = new[] { 0, 1, 2, 3};
         }
 
@@ -17,9 +16,12 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
         {
             if (rng == null) return 0;
 
-            int xyDiff = (int) Math.Max(Math.Abs(x * (1 / XParameter) - y * (1 / YParameter)), 1);
+            //int xyDiff = Math.Max(Math.Abs(x - y), 1);
+            int xyDiff = Math.Max((int)new [] {x, y}.Average(), 1);
 
             var randCol = rng.Next(0, 256);
+
+            //randCol = 1;
 
             int salt = 0;
 
@@ -31,13 +33,15 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
 
                 case 1:
 
-                    salt = Width / xyDiff;
+                    salt = (int) new[] {Width, xyDiff}.Average();
+                    //salt = Width / xyDiff
 
                     return (randCol * salt) % 255;
 
                 case 2:
 
-                    salt = Height / xyDiff;
+                    salt = (int) new[] { Height, xyDiff }.Average();
+                    //salt = Height / xyDiff
 
                     return (randCol * Height / xyDiff) % 255;
 
@@ -46,5 +50,5 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
                     return 0;
             }
         }
-    }
+    }*/
 }

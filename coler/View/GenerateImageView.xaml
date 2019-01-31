@@ -181,19 +181,19 @@
                            VerticalAlignment="Center"
                            Margin="0,0,0,10"/>
 
-                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding RedParameter, Mode=TwoWay}"/>
+                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding ColorGen1.Parameters.RedParameter, Mode=TwoWay}"/>
 
                             <Label Content="Green Parameter" 
                            VerticalAlignment="Center"
                            Margin="0,0,0,10"/>
 
-                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding GreenParameter, Mode=TwoWay}"/>
+                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding ColorGen1.Parameters.GreenParameter, Mode=TwoWay}"/>
 
                             <Label Content="Blue Parameter" 
                            VerticalAlignment="Center"
                            Margin="0,0,0,10"/>
 
-                            <TextBox Width="50" Margin="0,0,0,0" Text="{Binding BlueParameter, Mode=TwoWay}"/>
+                            <TextBox Width="50" Margin="0,0,0,0" Text="{Binding ColorGen1.Parameters.BlueParameter, Mode=TwoWay}"/>
 
                         </StackPanel>
                     </Border>

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
-using coler.Model;
-using coler.Model.ColorGen;
 using coler.Model.Enum;
 
-namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
+namespace coler.Model.ColorGen
 {
-    public class ColorGen2 : ColorGenBase, IColorGenFunction
+    /*public class ColorGen2 : ColorGenBase, IColorGenFunction
     {
         public ColorGen2()
         {
@@ -41,5 +39,5 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
 
             return 0;
         }
-    }
+    }*/
 }

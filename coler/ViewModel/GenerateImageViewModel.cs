@@ -32,6 +32,8 @@ namespace coler.ViewModel
         private ColorGenManager _colorGenManager;
         private GenImageManager _genImageManager;
 
+        public ColorGen1 ColorGen1 { get; set; }
+
         private int _seed;
 
         public enum EnPointUpdateType
@@ -47,14 +49,11 @@ namespace coler.ViewModel
         private double _xParameter = 1;
         private double _yParameter = 1;
 
-        private int _width = 1920;
-        private int _height = 1080;
+        private int _width;
+        private int _height;
         private int _genType;
 
         private bool _randomizeParameters;
-        private int _redParameter;
-        private int _greenParameter;
-        private int _blueParameter;
         private int _cellsLoaded;
         private bool _loadingCells;
         private int _cellsToLoad;
@@ -174,6 +173,8 @@ namespace coler.ViewModel
                 if (value == _width) return;
                 _width = value;
 
+                _colorGenManager.CanvasWidth = _width;
+
                 RaisePropertyChanged();
             }
         }
@@ -185,6 +186,9 @@ namespace coler.ViewModel
             {
                 if (value == _height) return;
                 _height = value;
+
+                _colorGenManager.CanvasWidth = _height;
+
                 RaisePropertyChanged();
             }
         }
@@ -262,39 +266,6 @@ namespace coler.ViewModel
             }
         }
 
-        public int RedParameter
-        {
-            get => _redParameter;
-            set
-            {
-                if (value == _redParameter) return;
-                _redParameter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public int GreenParameter
-        {
-            get => _greenParameter;
-            set
-            {
-                if (value == _greenParameter) return;
-                _greenParameter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public int BlueParameter
-        {
-            get => _blueParameter;
-            set
-            {
-                if (value == _blueParameter) return;
-                _blueParameter = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public int CellsLoaded
         {
             get => _cellsLoaded;
@@ -365,8 +336,6 @@ namespace coler.ViewModel
 
         #region Getter Properties
 
-        public IColorGenFunction SelectedColorGen => _colorGenManager.GetColorGen(GenType);
-
         public string TemplateName => string.IsNullOrWhiteSpace(TemplatePath) ? "" : TemplatePath.Split('\\').Last();
 
         public System.Drawing.Color BackgroundColor => System.Drawing.Color.FromArgb(SelectedColor.R, SelectedColor.G, SelectedColor.B);
@@ -403,6 +372,8 @@ namespace coler.ViewModel
             _colorGenManager = ColorGenManager.Instance;
             _genImageManager = GenImageManager.Instance;
 
+            ColorGen1 = new ColorGen1();
+
             ScalingModes = new List<BitmapScalingMode>
             {
                 BitmapScalingMode.NearestNeighbor,
@@ -410,8 +381,14 @@ namespace coler.ViewModel
                 BitmapScalingMode.Fant
             };
 
+            _width = _colorGenManager.CanvasWidth;
+            _height = _colorGenManager.CanvasHeight;
+
             InitializeCommands();
             InitializePoints();
+
+            RaisePropertyChanged(nameof(Width));
+            RaisePropertyChanged(nameof(Height));
         }
 
         private void InitializeCommands()
@@ -516,50 +493,74 @@ namespace coler.ViewModel
 
         #region Private Methods
 
-        private void SetPointColor(PixelData point, Random rng = null)
+        private void SetPointColor(PixelData pixel, Random rng = null)
         {
-            var x = point.CoordX;
-            var y = point.CoordY;
+            var x = pixel.CoordX;
+            var y = pixel.CoordY;
 
             if (rng == null)
             {
                 rng = new Random(_seed);
             }
 
-            int colorRed;
-            int colorGreen;
-            int colorBlue;
+            (int r, int g, int b) color = (0,0,0);
 
-            if (GenType == 0)
+            switch (GenType)
             {
-                colorRed = y % 3 == 0 ? 255 : 124;
-                colorGreen = x % 2 == 0 ? 255 : 124;
-                colorBlue = x % 9 == 0 || y % 8 == 0 ? 255 : 0;
+                case 0:
+
+                    color.r = y % 3 == 0 ? 255 : 124;
+                    color.g = x % 2 == 0 ? 255 : 124;
+                    color.b = x % 9 == 0 || y % 8 == 0 ? 255 : 0;
+
+                    break;
+
+                case 1:
+
+                    ColorGen1.Parameters.SetHeight();
+
+                    if (RandomizeParameters)
+                    {
+                        ColorGen1.Parameters.Randomize(rng);
+                    }
+
+                    color = ColorGen1.Function.GeneratePixel(x, y);
+
+                    break;
+
+                case 2:
+
+                    break;
+
+                case 3:
+
+                    break;
+
+                case 4:
+
+                    break;
+
+                case 5:
+
+                    break;
+            }
+
+            /*if (GenType == 0)
+            {
+                
             }
             else
             {
-                if (RandomizeParameters)
-                {
-                    SetParameters(SelectedColorGen.ColorParameters);
-                }
+                
 
                 colorGreen = SelectedColorGen.GenerateColor(x, y, GreenParameter, EnColor.Green, rng, point);
                 colorRed = SelectedColorGen.GenerateColor(x, y, RedParameter, EnColor.Red, rng, point);
                 colorBlue = SelectedColorGen.GenerateColor(x, y, BlueParameter, EnColor.Blue, rng, point);
-            }
+            }*/
 
-            point.ColorRed = colorRed;
-            point.ColorBlue = colorBlue;
-            point.ColorGreen = colorGreen;
-        }
-
-        private void SetParameters(int[] parameters)
-        {
-            var rng = new Random(_seed);
-
-            RedParameter = rng.Next(parameters.First(), parameters.Last());
-            GreenParameter = rng.Next(parameters.First(), parameters.Last());
-            BlueParameter = rng.Next(parameters.First(), parameters.Last());
+            pixel.ColorRed = color.r;
+            pixel.ColorBlue = color.g;
+            pixel.ColorGreen = color.b;
         }
 
         private void SetPixelColor(Bitmap image, Bitmap template, PixelData point)
@@ -608,9 +609,6 @@ namespace coler.ViewModel
 
         private void UpdateGrid(EnPointUpdateType pointUpdateType)
         {
-            SelectedColorGen?.UpdateDimensions(Width, Height);
-            SelectedColorGen?.UpdateParameters(XParameter, YParameter);
-
             CellsLoaded = 0;
             CellsToLoad = Width * Height;
 
@@ -661,7 +659,7 @@ namespace coler.ViewModel
                     {
                         foreach (var point in column)
                         {
-                            if (SelectedColorGen.Id == 5)
+                            if (GenType == 5)
                             {
                                 SetPointColor(point, rng);
                             }

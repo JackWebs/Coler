@@ -117,17 +117,17 @@
     </ApplicationDefinition>
     <Compile Include="BusinessLogic\Manager\ColorGenManager.cs" />
     <Compile Include="BusinessLogic\Manager\GenImageManager.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\FunctionGen1.cs" />
     <Compile Include="Globals\Constants.cs" />
     <Compile Include="Globals\Utils.cs" />
     <Compile Include="Globals\ViewModelLocator.cs" />
-    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen5.cs" />
+    <Compile Include="Model\ColorGen\ColorGen5.cs" />
+    <Compile Include="Model\ColorGen\Parameters\ParametersGen1.cs" />
     <Compile Include="Model\Enum\EnColor.cs" />
-    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen4.cs" />
-    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen3.cs" />
-    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen1.cs" />
-    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen2.cs" />
-    <Compile Include="Model\ColorGen\ColorGenBase.cs" />
-    <Compile Include="Model\ColorGen\Interface\IColorGenFunction.cs" />
+    <Compile Include="Model\ColorGen\ColorGen4.cs" />
+    <Compile Include="Model\ColorGen\ColorGen3.cs" />
+    <Compile Include="Model\ColorGen\ColorGen1.cs" />
+    <Compile Include="Model\ColorGen\ColorGen2.cs" />
     <Compile Include="Model\GenImage\GenImage.cs" />
     <Compile Include="Model\GenImage\GenImageList.cs" />
     <Compile Include="Model\GenImage\GenImageUi.cs" />

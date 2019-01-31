@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 using coler.BusinessLogic.Manager;
-using coler.Model;
-using coler.Model.ColorGen;
 using coler.Model.Enum;
 
-namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
+namespace coler.Model.ColorGen
 {
-    public class ColorGen5 : ColorGenBase, IColorGenFunction
+    /*public class ColorGen5 : ColorGenBase, IColorGenFunction
     {
         public ColorGen5()
         {
@@ -108,7 +103,7 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
                     var yDiff = Math.Abs(yCoord - point.CoordY);
 
                     var diff = Math.Sqrt(Math.Abs(xDiff * xDiff - yDiff * yDiff)) / radius;
-                    var colorValue = (int)(255 * diff);*/
+                    var colorValue = (int)(255 * diff);#1#
                     var colorValue = 255;
 
                     switch (color)
@@ -194,6 +189,6 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
                         throw new ArgumentOutOfRangeException(nameof(color), color, null);
                 }
             });
-        }*/
-    }
+        }#1#
+    }*/
 }
