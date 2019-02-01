@@ -15,6 +15,7 @@ using coler.BusinessLogic;
 using coler.BusinessLogic.Manager;
 using coler.Globals;
 using coler.Model.ColorGen;
+using coler.Model.ColorGen.Interface;
 using coler.Model.Enum;
 using coler.Model.GenImage;
 using GalaSoft.MvvmLight;
@@ -493,7 +494,7 @@ namespace coler.ViewModel
 
         #region Private Methods
 
-        private void SetPointColor(PixelData pixel, Random rng = null)
+        private void SetPointColor(PixelData pixel, IColorGen colorGen, Random rng = null)
         {
             var x = pixel.CoordX;
             var y = pixel.CoordY;
@@ -515,32 +516,16 @@ namespace coler.ViewModel
 
                     break;
 
-                case 1:
+                default:
 
-                    ColorGen1.Parameters.SetHeight();
+                    colorGen.SetCanvasSize();
 
                     if (RandomizeParameters)
                     {
-                        ColorGen1.Parameters.Randomize(rng);
+                        colorGen.RandomizeParameters(rng);
                     }
 
-                    color = ColorGen1.Function.GeneratePixel(x, y);
-
-                    break;
-
-                case 2:
-
-                    break;
-
-                case 3:
-
-                    break;
-
-                case 4:
-
-                    break;
-
-                case 5:
+                    color = colorGen.GeneratePixel(x, y);
 
                     break;
             }
@@ -654,23 +639,27 @@ namespace coler.ViewModel
                     _colorGenManager.ClearPoints();
 
                     var rng = new Random(_seed);
+                    var colorGen = _colorGenManager.GetColorGen(GenType);
 
-                    Parallel.ForEach(Points, column =>
+                    if (colorGen != null)
                     {
-                        foreach (var point in column)
+                        Parallel.ForEach(Points, column =>
                         {
-                            if (GenType == 5)
+                            foreach (var point in column)
                             {
-                                SetPointColor(point, rng);
-                            }
-                            else
-                            {
-                                SetPointColor(point);
-                            }
+                                if (GenType == 5)
+                                {
+                                    SetPointColor(point, colorGen, rng);
+                                }
+                                else
+                                {
+                                    SetPointColor(point, colorGen);
+                                }
 
-                            CellsLoaded++;
-                        }
-                    });    
+                                CellsLoaded++;
+                            }
+                        });
+                    }
 
                     break;
 

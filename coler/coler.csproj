@@ -122,6 +122,7 @@
     <Compile Include="Globals\Utils.cs" />
     <Compile Include="Globals\ViewModelLocator.cs" />
     <Compile Include="Model\ColorGen\ColorGen5.cs" />
+    <Compile Include="Model\ColorGen\Interface\IColorGen.cs" />
     <Compile Include="Model\ColorGen\Parameters\ParametersGen1.cs" />
     <Compile Include="Model\Enum\EnColor.cs" />
     <Compile Include="Model\ColorGen\ColorGen4.cs" />

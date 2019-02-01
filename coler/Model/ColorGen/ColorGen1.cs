@@ -4,12 +4,13 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using coler.Annotations;
 using coler.BusinessLogic.Subsystems.ColorGenFunctions;
+using coler.Model.ColorGen.Interface;
 using coler.Model.ColorGen.Parameters;
 using coler.Model.Enum;
 
 namespace coler.Model.ColorGen
 {
-    public class ColorGen1 : INotifyPropertyChanged
+    public class ColorGen1 : INotifyPropertyChanged, IColorGen
     {
         private ParametersGen1 _parameters;
         private FunctionGen1 _function;
@@ -53,5 +54,20 @@ namespace coler.Model.ColorGen
         }
 
         #endregion
+
+        public void SetCanvasSize()
+        {
+            Parameters.SetCanvasSize();
+        }
+
+        public void RandomizeParameters(Random rng)
+        {
+            Parameters.Randomize(rng);
+        }
+
+        public (int r, int g, int b) GeneratePixel(int x, int y)
+        {
+            return Function.GeneratePixel(x, y);
+        }
     }
 }

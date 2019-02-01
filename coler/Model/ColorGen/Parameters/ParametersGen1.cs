@@ -66,7 +66,7 @@ namespace coler.Model.ColorGen.Parameters
             BlueParameter = rng.Next(AvailableValues.First(), AvailableValues.Last());
         }
 
-        public void SetHeight()
+        public void SetCanvasSize()
         {
             var colorGenManager = ColorGenManager.Instance;
 

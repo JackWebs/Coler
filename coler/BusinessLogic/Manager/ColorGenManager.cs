@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using coler.Model;
 using coler.Model.ColorGen;
+using coler.Model.ColorGen.Interface;
 using coler.Model.Enum;
 
 namespace coler.BusinessLogic.Manager
@@ -62,6 +63,39 @@ namespace coler.BusinessLogic.Manager
             if (y > column.Length) return null;
 
             return column[y];
+        }
+
+        public IColorGen GetColorGen(int genType)
+        {
+            switch (genType)
+            {
+                case 0:
+
+                    return null;
+
+                case 1:
+
+                    return new ColorGen1();
+
+                case 2:
+
+                    return null;
+
+                case 3:
+
+                    return null;
+
+                case 4:
+
+                    return null;
+
+                case 5:
+
+                    return null;
+
+                default:
+                    return null;
+            }
         }
 
         public void ClearPoints()
