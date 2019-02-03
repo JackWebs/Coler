@@ -7,6 +7,8 @@ using coler.BusinessLogic.Subsystems.ColorGenFunctions;
 using coler.Model.ColorGen.Interface;
 using coler.Model.ColorGen.Parameters;
 using coler.Model.Enum;
+using coler.Model.Parameter;
+using MyToolkit.Collections;
 
 namespace coler.Model.ColorGen
 {
@@ -43,6 +45,27 @@ namespace coler.Model.ColorGen
             Function = new FunctionGen1(Parameters);
         }
 
+        public void SetCanvasSize()
+        {
+            Parameters.SetCanvasSize();
+        }
+
+        public void RandomizeParameters(int seed)
+        {
+            var rng = new Random(seed);
+            Parameters.Randomize(rng);
+        }
+
+        public ObservableDictionary<int, ParameterBase> GetParameters()
+        {
+            return Parameters.Parameters;
+        }
+
+        public (int r, int g, int b) GeneratePixel(int x, int y, Random rng)
+        {
+            return Function.GeneratePixel(x, y);
+        }
+
         #region INotify
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -54,20 +77,5 @@ namespace coler.Model.ColorGen
         }
 
         #endregion
-
-        public void SetCanvasSize()
-        {
-            Parameters.SetCanvasSize();
-        }
-
-        public void RandomizeParameters(Random rng)
-        {
-            Parameters.Randomize(rng);
-        }
-
-        public (int r, int g, int b) GeneratePixel(int x, int y)
-        {
-            return Function.GeneratePixel(x, y);
-        }
     }
 }

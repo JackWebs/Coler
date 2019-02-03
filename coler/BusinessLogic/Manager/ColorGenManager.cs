@@ -79,11 +79,11 @@ namespace coler.BusinessLogic.Manager
 
                 case 2:
 
-                    return null;
+                    return new ColorGen2();
 
                 case 3:
 
-                    return null;
+                    return new ColorGen3();
 
                 case 4:
 

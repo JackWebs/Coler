@@ -18,9 +18,11 @@ using coler.Model.ColorGen;
 using coler.Model.ColorGen.Interface;
 using coler.Model.Enum;
 using coler.Model.GenImage;
+using coler.Model.Parameter;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
+using MyToolkit.Collections;
 using Color = System.Windows.Media.Color;
 using PixelData = coler.Model.PixelData;
 
@@ -33,8 +35,6 @@ namespace coler.ViewModel
         private ColorGenManager _colorGenManager;
         private GenImageManager _genImageManager;
 
-        public ColorGen1 ColorGen1 { get; set; }
-
         private int _seed;
 
         public enum EnPointUpdateType
@@ -45,10 +45,10 @@ namespace coler.ViewModel
 
         #region Backing Fields
 
-        private PixelData[][] _points;
+        private IColorGen _selectedColorGen;
+        private ObservableDictionary<int, ParameterBase> _selectedParameters;
 
-        private double _xParameter = 1;
-        private double _yParameter = 1;
+        private PixelData[][] _points;
 
         private int _width;
         private int _height;
@@ -75,6 +75,28 @@ namespace coler.ViewModel
         #endregion
 
         #region Properties
+
+        public ObservableDictionary<int, ParameterBase> SelectedParameters
+        {
+            get => _selectedParameters;
+            set
+            {
+                _selectedParameters = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public IColorGen SelectedColorGen
+        {
+            get => _selectedColorGen;
+            set
+            {
+                _selectedColorGen = value;
+                RaisePropertyChanged();
+
+                SelectedParameters = SelectedColorGen.GetParameters();
+            }
+        }
 
         public PixelData[][] Points
         {
@@ -141,28 +163,6 @@ namespace coler.ViewModel
                 _templatePath = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(TemplateName));
-            }
-        }
-
-        public double XParameter
-        {
-            get => _xParameter;
-            set
-            {
-                if (Math.Abs(value - _xParameter) < Constants.DoubleEqualityTolerance) return;
-                _xParameter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public double YParameter
-        {
-            get => _yParameter;
-            set
-            {
-                if (Math.Abs(value - _yParameter) < Constants.DoubleEqualityTolerance) return;
-                _yParameter = value;
-                RaisePropertyChanged();
             }
         }
 
@@ -264,7 +264,14 @@ namespace coler.ViewModel
                 if (value == _genType) return;
                 _genType = value;
                 RaisePropertyChanged();
+
+                SetSelectedColorGen();
             }
+        }
+
+        private void SetSelectedColorGen()
+        {
+            SelectedColorGen = _colorGenManager.GetColorGen(GenType);
         }
 
         public int CellsLoaded
@@ -373,7 +380,7 @@ namespace coler.ViewModel
             _colorGenManager = ColorGenManager.Instance;
             _genImageManager = GenImageManager.Instance;
 
-            ColorGen1 = new ColorGen1();
+            SelectedParameters = new ObservableDictionary<int, ParameterBase>();
 
             ScalingModes = new List<BitmapScalingMode>
             {
@@ -494,7 +501,7 @@ namespace coler.ViewModel
 
         #region Private Methods
 
-        private void SetPointColor(PixelData pixel, IColorGen colorGen, Random rng = null)
+        private void SetPointColor(PixelData pixel, Random rng = null)
         {
             var x = pixel.CoordX;
             var y = pixel.CoordY;
@@ -518,14 +525,14 @@ namespace coler.ViewModel
 
                 default:
 
-                    colorGen.SetCanvasSize();
+                    SelectedColorGen.SetCanvasSize();
 
                     if (RandomizeParameters)
                     {
-                        colorGen.RandomizeParameters(rng);
+                        SelectedColorGen.RandomizeParameters(_seed);
                     }
 
-                    color = colorGen.GeneratePixel(x, y);
+                    color = SelectedColorGen.GeneratePixel(x, y, rng);
 
                     break;
             }
@@ -639,9 +646,8 @@ namespace coler.ViewModel
                     _colorGenManager.ClearPoints();
 
                     var rng = new Random(_seed);
-                    var colorGen = _colorGenManager.GetColorGen(GenType);
 
-                    if (colorGen != null)
+                    if (SelectedColorGen != null)
                     {
                         Parallel.ForEach(Points, column =>
                         {
@@ -649,11 +655,11 @@ namespace coler.ViewModel
                             {
                                 if (GenType == 5)
                                 {
-                                    SetPointColor(point, colorGen, rng);
+                                    SetPointColor(point, rng);
                                 }
                                 else
                                 {
-                                    SetPointColor(point, colorGen);
+                                    SetPointColor(point);
                                 }
 
                                 CellsLoaded++;

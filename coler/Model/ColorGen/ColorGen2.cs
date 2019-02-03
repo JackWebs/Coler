@@ -1,43 +1,81 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using coler.Annotations;
+using coler.BusinessLogic.Subsystems.ColorGenFunctions;
+using coler.Model.ColorGen.Interface;
+using coler.Model.ColorGen.Parameters;
 using coler.Model.Enum;
+using coler.Model.Parameter;
+using MyToolkit.Collections;
 
 namespace coler.Model.ColorGen
 {
-    /*public class ColorGen2 : ColorGenBase, IColorGenFunction
+    public class ColorGen2 : INotifyPropertyChanged, IColorGen
     {
+        private ParametersGen2 _parameters;
+        private FunctionGen2 _function;
+
+        public ParametersGen2 Parameters
+        {
+            get => _parameters;
+            set
+            {
+                if (Equals(value, _parameters)) return;
+                _parameters = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public FunctionGen2 Function
+        {
+            get => _function;
+            set
+            {
+                if (Equals(value, _function)) return;
+                _function = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ColorGen2()
         {
-            Id = 2;
-            ColorParameters = new[] { 0, 1, 2};
+            Parameters = new ParametersGen2();
+            Function = new FunctionGen2(Parameters);
         }
 
-        public int GenerateColor(int x, int y, int parameter, EnColor color, Random rng = null, PixelData point = null)
+        public void SetCanvasSize()
         {
-            var halfWidth = Width / 2;
-            var halfHeight = Height / 2;
-
-            var xVal = (int) Math.Abs(x * (1 / XParameter) - halfWidth) * rng.Next(0, 255);
-            var yVal = (int) Math.Abs(y * (1 / YParameter) - halfHeight) * rng.Next(0, 255);
-
-            switch (parameter)
-            {
-                case 0:
-
-                    return xVal % 255;
-
-                case 1:
-
-                    return yVal % 255;
-
-                case 2:
-
-                    var colorVal = (int)new[] { xVal, yVal }.Average();
-
-                    return colorVal % 255;
-            }
-
-            return 0;
+            Parameters.SetCanvasSize();
         }
-    }*/
+
+        public void RandomizeParameters(int seed)
+        {
+            var rng = new Random(seed);
+            Parameters.Randomize(rng);
+        }
+
+        public ObservableDictionary<int, ParameterBase> GetParameters()
+        {
+            return Parameters.Parameters;
+        }
+
+        public (int r, int g, int b) GeneratePixel(int x, int y, Random rng)
+        {
+            return Function.GeneratePixel(x, y, rng);
+        }
+
+        #region INotify
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+    }
 }

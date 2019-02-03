@@ -1,54 +1,81 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using coler.Annotations;
+using coler.BusinessLogic.Subsystems.ColorGenFunctions;
+using coler.Model.ColorGen.Interface;
+using coler.Model.ColorGen.Parameters;
 using coler.Model.Enum;
+using coler.Model.Parameter;
+using MyToolkit.Collections;
 
 namespace coler.Model.ColorGen
 {
-    /*public class ColorGen3 : ColorGenBase, IColorGenFunction
+    public class ColorGen3 : INotifyPropertyChanged, IColorGen
     {
-        public ColorGen3()
+        private ParametersGen3 _parameters;
+        private FunctionGen3 _function;
+
+        public ParametersGen3 Parameters
         {
-            Id = 3;
-            ColorParameters = new[] { 0, 1, 2, 3};
-        }
-
-        public int GenerateColor(int x, int y, int parameter, EnColor color, Random rng = null, PixelData point = null)
-        {
-            if (rng == null) return 0;
-
-            //int xyDiff = Math.Max(Math.Abs(x - y), 1);
-            int xyDiff = Math.Max((int)new [] {x, y}.Average(), 1);
-
-            var randCol = rng.Next(0, 256);
-
-            //randCol = 1;
-
-            int salt = 0;
-
-            switch (parameter)
+            get => _parameters;
+            set
             {
-                case 0:
-
-                    return (randCol * xyDiff) % 255;
-
-                case 1:
-
-                    salt = (int) new[] {Width, xyDiff}.Average();
-                    //salt = Width / xyDiff
-
-                    return (randCol * salt) % 255;
-
-                case 2:
-
-                    salt = (int) new[] { Height, xyDiff }.Average();
-                    //salt = Height / xyDiff
-
-                    return (randCol * Height / xyDiff) % 255;
-
-                default:
-
-                    return 0;
+                if (Equals(value, _parameters)) return;
+                _parameters = value;
+                OnPropertyChanged();
             }
         }
-    }*/
+
+        public FunctionGen3 Function
+        {
+            get => _function;
+            set
+            {
+                if (Equals(value, _function)) return;
+                _function = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ColorGen3()
+        {
+            Parameters = new ParametersGen3();
+            Function = new FunctionGen3(Parameters);
+        }
+
+        public void SetCanvasSize()
+        {
+            Parameters.SetCanvasSize();
+        }
+
+        public void RandomizeParameters(int seed)
+        {
+            var rng = new Random(seed);
+            Parameters.Randomize(rng);
+        }
+
+        public ObservableDictionary<int, ParameterBase> GetParameters()
+        {
+            return Parameters.Parameters;
+        }
+
+        public (int r, int g, int b) GeneratePixel(int x, int y, Random rng)
+        {
+            return Function.GeneratePixel(x, y, rng);
+        }
+
+        #region INotify
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+    }
 }

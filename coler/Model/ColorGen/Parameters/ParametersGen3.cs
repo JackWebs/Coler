@@ -12,7 +12,7 @@ using MyToolkit.Collections;
 
 namespace coler.Model.ColorGen.Parameters
 {
-    public class ParametersGen1 : INotifyPropertyChanged
+    public class ParametersGen3 : INotifyPropertyChanged
     {
         private ObservableDictionary<int, ParameterBase> _parameters;
 
@@ -37,9 +37,9 @@ namespace coler.Model.ColorGen.Parameters
         public int GreenParameter => ((ParameterInt)Parameters[1]).Value;
         public int BlueParameter => ((ParameterInt)Parameters[2]).Value;
 
-        public ParametersGen1()
+        public ParametersGen3()
         {
-            var valueRange = new[] {0, 1, 2, 3};
+            var valueRange = new[] { 0, 1, 2, 3 };
 
             Parameters = new ObservableDictionary<int, ParameterBase>
             {
@@ -73,7 +73,7 @@ namespace coler.Model.ColorGen.Parameters
 
         public void Randomize(Random rng)
         {
-            foreach (var parameter in Parameters.Values)
+            foreach (var parameter in Parameters.Values.Take(3))
             {
                 parameter.Randomize(rng);
             }

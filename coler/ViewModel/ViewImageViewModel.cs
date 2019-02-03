@@ -160,14 +160,17 @@ namespace coler.ViewModel
 
         public void DeleteImages()
         {
-            for (var i = Images.Count - 1; i >= 0; i--)
+            var imagesToRemove = Images.Where(x => x.IsSelected).ToArray();
+            var imageCount = imagesToRemove.Count() - 1;
+
+            for (var i = imageCount; i >= 0; i--)
             {
-                var image = Images[i];
+                var image = imagesToRemove[i];
 
                 if (!image.IsSelected) continue;
 
                 _genImageManager.DeleteImage(image.ImageData);
-                Images.RemoveAt(i);
+                Images.Remove(image);
             }
 
             RefreshImages();
