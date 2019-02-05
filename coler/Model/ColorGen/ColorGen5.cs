@@ -1,194 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using coler.Annotations;
 using coler.BusinessLogic.Manager;
+using coler.BusinessLogic.Subsystems.ColorGenFunctions;
+using coler.Model.ColorGen.Interface;
+using coler.Model.ColorGen.Parameters;
 using coler.Model.Enum;
+using coler.Model.Parameter;
+using MyToolkit.Collections;
 
 namespace coler.Model.ColorGen
 {
-    /*public class ColorGen5 : ColorGenBase, IColorGenFunction
+    public class ColorGen5 : INotifyPropertyChanged, IColorGen
     {
+        private ParametersGen5 _parameters;
+        private FunctionGen5 _function;
+
+        public ParametersGen5 Parameters
+        {
+            get => _parameters;
+            set
+            {
+                if (Equals(value, _parameters)) return;
+                _parameters = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public FunctionGen5 Function
+        {
+            get => _function;
+            set
+            {
+                if (Equals(value, _function)) return;
+                _function = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ColorGen5()
         {
-            Id = 5;
-            ColorParameters = new[] { 0, 1, 2, 3};
+            Parameters = new ParametersGen5();
+            Function = new FunctionGen5(Parameters);
         }
 
-        public int GenerateColor(int x, int y, int parameter, EnColor color, Random rng = null, PixelData point = null)
+        public void SetCanvasSize()
         {
-            if (rng == null || point == null) return 0;
-
-            var probability = 1 / (XParameter * XParameter);
-
-            bool returnColor;
-
-            lock (rng)
-            {
-                if (rng.NextDouble() < probability)
-                {
-                    var radius = rng.Next(0, (int) YParameter);
-
-                    CreateSquare(x, y, color, radius);
-
-                    returnColor = true;
-                }
-                else
-                {
-                    returnColor = false;
-                }
-            }
-
-            if (returnColor)
-            {
-                return 255;
-            }
-
-            int existingColorValue;
-
-            switch (color)
-            {
-                case EnColor.Red:
-
-                    existingColorValue = point.ColorRed;
-
-                    break;
-
-                case EnColor.Green:
-
-                    existingColorValue = point.ColorGreen;
-
-                    break;
-
-                case EnColor.Blue:
-
-                    existingColorValue = point.ColorBlue;
-
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(color), color, null);
-            }
-
-            return existingColorValue;
+            Parameters.SetCanvasSize();
         }
 
-        private void CreateSquare(int xCoord, int yCoord, EnColor color, int radius)
+        public void RandomizeParameters(int seed)
         {
-            var colorManager = ColorGenManager.Instance;
-            var points = colorManager.Points;
-
-            var width = points.Length;
-            var height = points[0].Length;
-
-            var xMin = Math.Max(0, xCoord - (radius + 1));
-            var yMin = Math.Max(0, yCoord - (radius + 1));
-
-            var xMax = Math.Min(width, xCoord + (radius + 1));
-            var yMax = Math.Min(height, yCoord + (radius + 1));
-
-            var selectedPoints = new List<PixelData>();
-
-            for (var x = xMin; x < xMax; x++)
-            {
-                for (var y = yMin; y < yMax; y++)
-                {
-                    selectedPoints.Add(points[x][y]);
-                }
-            }
-
-            foreach (var point in selectedPoints)
-            {
-                {
-                    //if (point.CoordX == xCoord && point.CoordY == yCoord) return;
-                    /*var xDiff = Math.Abs(xCoord - point.CoordX);
-                    var yDiff = Math.Abs(yCoord - point.CoordY);
-
-                    var diff = Math.Sqrt(Math.Abs(xDiff * xDiff - yDiff * yDiff)) / radius;
-                    var colorValue = (int)(255 * diff);#1#
-                    var colorValue = 255;
-
-                    switch (color)
-                    {
-                        case EnColor.Red:
-
-                            point.ColorRed = colorValue;
-
-                            break;
-
-                        case EnColor.Green:
-
-                            point.ColorGreen = colorValue;
-
-                            break;
-
-                        case EnColor.Blue:
-
-                            point.ColorBlue = colorValue;
-
-                            break;
-
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(color), color, null);
-                    }
-                }
-            }
+            var rng = new Random(seed);
+            Parameters.Randomize(rng);
         }
 
-        /*private void CreateCircle(int xCoord, int yCoord, EnColor color, double radius)
+        public ObservableDictionary<int, ParameterBase> GetParameters()
         {
-            var colorManager = ColorGenManager.Instance;
-            var points = colorManager.Points;
+            return Parameters.Parameters;
+        }
 
-            var width = points.Max(xPoint => xPoint.CoordX);
-            var height = points.Max(yPoint => yPoint.CoordY);
+        public (int r, int g, int b) GeneratePixel(int x, int y, Random rng, PixelData point = null)
+        {
+            return Function.GeneratePixel(x, y, rng, point);
+        }
 
-            var xMin = (int) Math.Max(0, xCoord - radius);
-            var yMin = (int) Math.Max(0, yCoord - radius);
+        #region INotify
 
-            var xMax = (int) Math.Min(width, xCoord + radius);
-            var yMax = (int) Math.Min(height, yCoord + radius);
+        public event PropertyChangedEventHandler PropertyChanged;
 
-            var count = xMax - xMin;
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-            var selectedPoints = new List<PixelData>();
-
-            for (var y = yMin; y < yMax; y++)
-            {
-                selectedPoints.AddRange(points.GetRange((y*width) + xMin, count));
-            }
-
-            Parallel.ForEach(selectedPoints, point =>
-            {
-                if (point.CoordX == xCoord && point.CoordY == yCoord) return;
-                var xDiff = Math.Abs(xCoord - point.CoordX);
-                var yDiff = Math.Abs(yCoord - point.CoordY);
-
-                var diff = Math.Sqrt(Math.Abs(xDiff * xDiff - yDiff * yDiff)) / radius;
-                var colorValue = (int) (255 * diff);
-
-                switch (color)
-                {
-                    case EnColor.Red:
-
-                        point.ColorRed = colorValue;
-
-                        break;
-
-                    case EnColor.Green:
-
-                        point.ColorGreen = colorValue;
-
-                        break;
-
-                    case EnColor.Blue:
-
-                        point.ColorBlue = colorValue;
-
-                        break;
-
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(color), color, null);
-                }
-            });
-        }#1#
-    }*/
+        #endregion
+    }
 }

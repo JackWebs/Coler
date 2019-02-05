@@ -532,7 +532,7 @@ namespace coler.ViewModel
                         SelectedColorGen.RandomizeParameters(_seed);
                     }
 
-                    color = SelectedColorGen.GeneratePixel(x, y, rng);
+                    color = SelectedColorGen.GeneratePixel(x, y, rng, pixel);
 
                     break;
             }

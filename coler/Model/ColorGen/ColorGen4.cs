@@ -1,48 +1,80 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using coler.Annotations;
+using coler.BusinessLogic.Subsystems.ColorGenFunctions;
+using coler.Model.ColorGen.Interface;
+using coler.Model.ColorGen.Parameters;
 using coler.Model.Enum;
+using coler.Model.Parameter;
+using MyToolkit.Collections;
 
 namespace coler.Model.ColorGen
 {
-    /*public class ColorGen4 : ColorGenBase, IColorGenFunction
+    public class ColorGen4 : INotifyPropertyChanged, IColorGen
     {
-        public ColorGen4()
+        private ParametersGen4 _parameters;
+        private FunctionGen4 _function;
+
+        public ParametersGen4 Parameters
         {
-            Id = 4;
-            ColorParameters = new[] { 0, 1, 2, 3};
-        }
-
-        public int GenerateColor(int x, int y, int parameter, EnColor color, Random rng = null, PixelData point = null)
-        {
-            if (rng == null) return 0;
-
-            int xyDiff = (int) Math.Max(Math.Abs(x * (1 / XParameter) - y * (1 / YParameter)), 1);
-
-            var randCol = rng.Next(0, 256);
-
-            int salt = 0;
-
-            switch (parameter)
+            get => _parameters;
+            set
             {
-                case 0:
-
-                    return (randCol * xyDiff) % 255;
-
-                case 1:
-
-                    salt = Width / xyDiff;
-
-                    return (randCol * salt) % 255;
-
-                case 2:
-
-                    salt = Height / xyDiff;
-
-                    return (randCol * Height / xyDiff) % 255;
-
-                default:
-
-                    return 0;
+                if (Equals(value, _parameters)) return;
+                _parameters = value;
+                OnPropertyChanged();
             }
         }
-    }*/
+
+        public FunctionGen4 Function
+        {
+            get => _function;
+            set
+            {
+                if (Equals(value, _function)) return;
+                _function = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ColorGen4()
+        {
+            Parameters = new ParametersGen4();
+            Function = new FunctionGen4(Parameters);
+        }
+
+        public void SetCanvasSize()
+        {
+            Parameters.SetCanvasSize();
+        }
+
+        public void RandomizeParameters(int seed)
+        {
+            var rng = new Random(seed);
+            Parameters.Randomize(rng);
+        }
+
+        public ObservableDictionary<int, ParameterBase> GetParameters()
+        {
+            return Parameters.Parameters;
+        }
+
+        public (int r, int g, int b) GeneratePixel(int x, int y, Random rng, PixelData point = null)
+        {
+            return Function.GeneratePixel(x, y, rng);
+        }
+
+        #region INotify
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+    }
 }

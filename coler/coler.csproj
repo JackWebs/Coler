@@ -119,6 +119,8 @@
     <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\FunctionGen1.cs" />
     <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\FunctionGen2.cs" />
     <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\FunctionGen3.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\FunctionGen4.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\FunctionGen5.cs" />
     <Compile Include="Globals\Constants.cs" />
     <Compile Include="Globals\Utils.cs" />
     <Compile Include="Globals\ViewModelLocator.cs" />
@@ -127,6 +129,8 @@
     <Compile Include="Model\ColorGen\Parameters\ParametersGen1.cs" />
     <Compile Include="Model\ColorGen\Parameters\ParametersGen2.cs" />
     <Compile Include="Model\ColorGen\Parameters\ParametersGen3.cs" />
+    <Compile Include="Model\ColorGen\Parameters\ParametersGen4.cs" />
+    <Compile Include="Model\ColorGen\Parameters\ParametersGen5.cs" />
     <Compile Include="Model\Enum\EnColor.cs" />
     <Compile Include="Model\ColorGen\ColorGen4.cs" />
     <Compile Include="Model\ColorGen\ColorGen3.cs" />

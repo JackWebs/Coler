@@ -10,6 +10,6 @@ namespace coler.Model.ColorGen.Interface
         void RandomizeParameters(int seed);
 
         ObservableDictionary<int, ParameterBase> GetParameters();
-        (int r, int g, int b) GeneratePixel(int x, int y, Random rng);
+        (int r, int g, int b) GeneratePixel(int x, int y, Random rng, PixelData point);
     }
 }

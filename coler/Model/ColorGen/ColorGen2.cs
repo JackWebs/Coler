@@ -61,7 +61,7 @@ namespace coler.Model.ColorGen
             return Parameters.Parameters;
         }
 
-        public (int r, int g, int b) GeneratePixel(int x, int y, Random rng)
+        public (int r, int g, int b) GeneratePixel(int x, int y, Random rng, PixelData point = null)
         {
             return Function.GeneratePixel(x, y, rng);
         }
