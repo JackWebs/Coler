@@ -1,36 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 using coler.BusinessLogic.Manager;
 using coler.Model;
-using coler.Model.ColorGen;
+using coler.Model.ColorGen.Parameters;
 using coler.Model.Enum;
 
 namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
 {
-    public class ColorGen5 : ColorGenBase, IColorGenFunction
+    public class FunctionGen5
     {
-        public ColorGen5()
+        private readonly ParametersGen5 _parameters;
+
+        public FunctionGen5(ParametersGen5 parameters)
         {
-            Id = 5;
-            ColorParameters = new[] { 0, 1, 2, 3};
+            _parameters = parameters;
         }
 
-        public int GenerateColor(int x, int y, int parameter, EnColor color, Random rng = null, PixelData point = null)
+        public (int, int, int) GeneratePixel(int x, int y, Random rng, PixelData point)
+        {
+            var colorRed = GenerateColor(x, y, EnColor.Red, rng, point);
+            var colorGreen = GenerateColor(x, y, EnColor.Green, rng, point);
+            var colorBlue = GenerateColor(x, y, EnColor.Blue, rng, point);
+
+            return (colorRed, colorGreen, colorBlue);
+        }
+
+        public int GenerateColor(int x, int y, EnColor color, Random rng, PixelData point)
         {
             if (rng == null || point == null) return 0;
 
-            var probability = 1 / (XParameter * XParameter);
+            var probability = (double)1 / (_parameters.XParameter * _parameters.XParameter);
 
             bool returnColor;
+
+            var parameterY = _parameters.YParameter;
 
             lock (rng)
             {
                 if (rng.NextDouble() < probability)
                 {
-                    var radius = rng.Next(0, (int) YParameter);
+                    var radius = rng.Next(0, parameterY);
 
                     CreateSquare(x, y, color, radius);
 

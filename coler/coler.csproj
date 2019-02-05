@@ -8,12 +8,13 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>coler</RootNamespace>
     <AssemblyName>coler</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -43,6 +44,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -58,9 +60,6 @@
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net46\CommonServiceLocator.dll</HintPath>
     </Reference>
-    <Reference Include="CsvHelper, Version=12.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\packages\CsvHelper.12.1.1\lib\net45\CsvHelper.dll</HintPath>
-    </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
@@ -70,12 +69,12 @@
     <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="MyToolkit, Version=2.5.16.0, Culture=neutral, PublicKeyToken=3e349a1360994d26, processorArchitecture=MSIL">
+      <HintPath>..\packages\MyToolkit.2.5.16\lib\portable-net45+wp8+win8+wpa81\MyToolkit.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -117,20 +116,32 @@
     </ApplicationDefinition>
     <Compile Include="BusinessLogic\Manager\ColorGenManager.cs" />
     <Compile Include="BusinessLogic\Manager\GenImageManager.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\FunctionGen1.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\FunctionGen2.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\FunctionGen3.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\FunctionGen4.cs" />
+    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\FunctionGen5.cs" />
     <Compile Include="Globals\Constants.cs" />
     <Compile Include="Globals\Utils.cs" />
     <Compile Include="Globals\ViewModelLocator.cs" />
-    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen5.cs" />
+    <Compile Include="Model\ColorGen\ColorGen5.cs" />
+    <Compile Include="Model\ColorGen\Interface\IColorGen.cs" />
+    <Compile Include="Model\ColorGen\Parameters\ParametersGen1.cs" />
+    <Compile Include="Model\ColorGen\Parameters\ParametersGen2.cs" />
+    <Compile Include="Model\ColorGen\Parameters\ParametersGen3.cs" />
+    <Compile Include="Model\ColorGen\Parameters\ParametersGen4.cs" />
+    <Compile Include="Model\ColorGen\Parameters\ParametersGen5.cs" />
     <Compile Include="Model\Enum\EnColor.cs" />
-    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen4.cs" />
-    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen3.cs" />
-    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen1.cs" />
-    <Compile Include="BusinessLogic\Subsystems\ColorGenFunctions\ColorGen2.cs" />
-    <Compile Include="Model\ColorGen\ColorGenBase.cs" />
-    <Compile Include="Model\ColorGen\Interface\IColorGenFunction.cs" />
+    <Compile Include="Model\ColorGen\ColorGen4.cs" />
+    <Compile Include="Model\ColorGen\ColorGen3.cs" />
+    <Compile Include="Model\ColorGen\ColorGen1.cs" />
+    <Compile Include="Model\ColorGen\ColorGen2.cs" />
     <Compile Include="Model\GenImage\GenImage.cs" />
     <Compile Include="Model\GenImage\GenImageList.cs" />
     <Compile Include="Model\GenImage\GenImageUi.cs" />
+    <Compile Include="Model\Parameter\ParameterBase.cs" />
+    <Compile Include="Model\Parameter\ParameterGeneric.cs" />
+    <Compile Include="Model\Parameter\ParameterInt.cs" />
     <Compile Include="Model\PixelData.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel\GenerateImageViewModel.cs" />

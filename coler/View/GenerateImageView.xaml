@@ -175,44 +175,31 @@
                     </Border>
 
                     <Border Style="{StaticResource ConfigBorderStyle}">
-                        <StackPanel Margin="0,0,0,0">
+                        <ItemsControl ItemsSource="{Binding SelectedParameters.Values}">
 
-                            <Label Content="Red Parameter" 
-                           VerticalAlignment="Center"
-                           Margin="0,0,0,10"/>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
 
-                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding RedParameter, Mode=TwoWay}"/>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
 
-                            <Label Content="Green Parameter" 
-                           VerticalAlignment="Center"
-                           Margin="0,0,0,10"/>
+                                    <StackPanel>
 
-                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding GreenParameter, Mode=TwoWay}"/>
+                                        <Label Content="{Binding Name}" 
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,0,10"/>
 
-                            <Label Content="Blue Parameter" 
-                           VerticalAlignment="Center"
-                           Margin="0,0,0,10"/>
+                                        <TextBox Width="50" Margin="0,0,0,20" Text="{Binding Value, Mode=TwoWay}"/>
 
-                            <TextBox Width="50" Margin="0,0,0,0" Text="{Binding BlueParameter, Mode=TwoWay}"/>
+                                    </StackPanel>
 
-                        </StackPanel>
-                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
 
-                    <Border Style="{StaticResource ConfigBorderStyle}">
-                        <StackPanel Margin="0,0,0,0">
-
-                            <Label Content="X Parameter" 
-                           VerticalAlignment="Center"
-                           Margin="0,0,0,10"/>
-
-                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding XParameter, Mode=TwoWay}"/>
-
-                            <Label Content="Y Parameter" 
-                           VerticalAlignment="Center"
-                           Margin="0,0,0,10"/>
-
-                            <TextBox Width="50" Margin="0,0,0,20" Text="{Binding YParameter, Mode=TwoWay}"/>
-                        </StackPanel>
+                        </ItemsControl>
                     </Border>
 
                     <Border Style="{StaticResource ConfigBorderStyle}">
