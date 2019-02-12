@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using coler.Annotations;
+using coler.Properties;
 using GalaSoft.MvvmLight;
 
-namespace coler.ViewModel
+namespace coler.UI.ViewModel
 {
     public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {

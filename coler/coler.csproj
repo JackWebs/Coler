@@ -144,16 +144,17 @@
     <Compile Include="Model\Parameter\ParameterInt.cs" />
     <Compile Include="Model\PixelData.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="ViewModel\GenerateImageViewModel.cs" />
-    <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\ViewImageViewModel.cs" />
-    <Compile Include="View\GenerateImageView.xaml.cs">
+    <Compile Include="UI\CustomControls\ZoomBorder.cs" />
+    <Compile Include="UI\ViewModel\GenerateImageViewModel.cs" />
+    <Compile Include="UI\ViewModel\MainViewModel.cs" />
+    <Compile Include="UI\ViewModel\ViewImageViewModel.cs" />
+    <Compile Include="UI\View\GenerateImageView.xaml.cs">
       <DependentUpon>GenerateImageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\MainView.xaml.cs">
+    <Compile Include="UI\View\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\ViewImageView.xaml.cs">
+    <Compile Include="UI\View\ViewImageView.xaml.cs">
       <DependentUpon>ViewImageView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
@@ -168,15 +169,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\GenerateImageView.xaml">
+    <Page Include="UI\View\GenerateImageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\MainView.xaml">
+    <Page Include="UI\View\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ViewImageView.xaml">
+    <Page Include="UI\View\ViewImageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

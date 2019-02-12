@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using coler.ViewModel;
+using coler.UI.ViewModel;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;

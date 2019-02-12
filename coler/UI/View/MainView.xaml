@@ -1,13 +1,12 @@
-﻿<UserControl x:Class="coler.View.MainView"
+﻿<UserControl x:Class="coler.UI.View.MainView"
              x:Name="ParentContainer"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:coler.View"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-             xmlns:viewModel="clr-namespace:coler.ViewModel"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:view="clr-namespace:coler.UI.View"
 
              DataContext="{Binding MainViewModel, Source={StaticResource Locator}}">
 
@@ -15,10 +14,10 @@
 
         <TabControl>
             <TabItem Header="Generate Images">
-                <local:GenerateImageView/>
+                <view:GenerateImageView/>
             </TabItem>
             <TabItem Header="View Images">
-                <local:ViewImageView/>
+                <view:ViewImageView/>
             </TabItem>
         </TabControl>
 

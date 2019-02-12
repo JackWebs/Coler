@@ -1,16 +1,16 @@
-﻿<UserControl x:Class="coler.View.ViewImageView"
+﻿<UserControl x:Class="coler.UI.View.ViewImageView"
              x:Name="ParentContainer"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:coler.View"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-             xmlns:viewModel="clr-namespace:coler.ViewModel"
+             xmlns:cc="clr-namespace:coler.UI.CustomControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{Binding ViewImageViewModel, Source={StaticResource Locator}}">
-    <Grid>
+
+    <Grid ClipToBounds="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -50,7 +50,9 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-                        <Button Command="{Binding DataContext.SelectImageCommand, ElementName=ParentContainer}" CommandParameter="{Binding .}">
+                        <Button x:Name="ImageButton" 
+                                Command="{Binding DataContext.SelectImageCommand, ElementName=ParentContainer}" CommandParameter="{Binding .}"
+                                MouseDoubleClick="ImageButton_OnMouseDoubleClick">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
 
@@ -105,5 +107,34 @@
             <Button Content="Delete" Command="{Binding DeleteImagesCommand}" Margin="10,20" Height="50"/>
 
         </UniformGrid>
+
+        <cc:ZoomBorder x:Name="ZoomBorder" Grid.Row="0" Grid.RowSpan="3"
+                       Padding="50"
+                       DoubleClick="ZoomBorder_OnDoubleClick">
+            <cc:ZoomBorder.Background>
+                <SolidColorBrush Color="Black" Opacity="0.5"/>
+            </cc:ZoomBorder.Background>
+            <cc:ZoomBorder.Style>
+                <Style TargetType="{x:Type cc:ZoomBorder}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ShowImageZoom}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </cc:ZoomBorder.Style>
+            <Image x:Name="SelectedImage" 
+                   Source="{Binding SelectedImageFilePath}"
+                   RenderOptions.BitmapScalingMode="{Binding SelectedScalingMode}"
+                   Stretch="Uniform"
+                   SnapsToDevicePixels="True"/>
+        </cc:ZoomBorder>
+
+        <ComboBox Grid.Row="0" 
+                  ItemsSource="{Binding ScalingModes}" SelectedItem="{Binding SelectedScalingMode}"
+                  Margin="0,0,0,0" Width="150"
+                  HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </Grid>
+
 </UserControl>

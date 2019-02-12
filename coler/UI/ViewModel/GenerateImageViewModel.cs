@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using coler.Annotations;
-using coler.BusinessLogic;
 using coler.BusinessLogic.Manager;
 using coler.Globals;
-using coler.Model.ColorGen;
 using coler.Model.ColorGen.Interface;
-using coler.Model.Enum;
 using coler.Model.GenImage;
 using coler.Model.Parameter;
 using GalaSoft.MvvmLight;
@@ -26,7 +19,7 @@ using MyToolkit.Collections;
 using Color = System.Windows.Media.Color;
 using PixelData = coler.Model.PixelData;
 
-namespace coler.ViewModel
+namespace coler.UI.ViewModel
 {
     public class GenerateImageViewModel : ViewModelBase
     {

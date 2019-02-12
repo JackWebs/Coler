@@ -3,14 +3,14 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using coler.Annotations;
-using coler.BusinessLogic;
+using System.Windows.Media;
 using coler.BusinessLogic.Manager;
 using coler.Model.GenImage;
+using coler.Properties;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-namespace coler.ViewModel
+namespace coler.UI.ViewModel
 {
     public class ViewImageViewModel : ViewModelBase, INotifyPropertyChanged
     {
@@ -23,9 +23,15 @@ namespace coler.ViewModel
         private List<GenImageUi> _images;
         private ObservableCollection<GenImageUi> _displayedImages;
 
+        private BitmapScalingMode _selectedScalingMode = BitmapScalingMode.Fant;
+        private List<BitmapScalingMode> _scalingModes;
+
+        private string _selectedImageFilePath;
+
         private int _imageWidth;
 
         private bool _showSavedImages;
+        private bool _showImageZoom;
 
         #endregion
 
@@ -57,6 +63,38 @@ namespace coler.ViewModel
             }
         }
 
+        public string SelectedImageFilePath
+        {
+            get => _selectedImageFilePath;
+            set
+            {
+                _selectedImageFilePath = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public BitmapScalingMode SelectedScalingMode
+        {
+            get => _selectedScalingMode;
+            set
+            {
+                if (value == _selectedScalingMode) return;
+                _selectedScalingMode = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public List<BitmapScalingMode> ScalingModes
+        {
+            get => _scalingModes;
+            set
+            {
+                if (Equals(value, _scalingModes)) return;
+                _scalingModes = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int ImageWidth
         {
             get => _imageWidth;
@@ -78,6 +116,16 @@ namespace coler.ViewModel
 
                 UpdateDisplayedImages();
 
+                OnPropertyChanged();
+            }
+        }
+        public bool ShowImageZoom
+        {
+            get => _showImageZoom;
+            set
+            {
+                if (_showImageZoom.Equals(value)) return;
+                _showImageZoom = value;
                 OnPropertyChanged();
             }
         }
@@ -121,6 +169,13 @@ namespace coler.ViewModel
             RefreshImages();
 
             ImageWidth = 200;
+
+            ScalingModes = new List<BitmapScalingMode>
+            {
+                BitmapScalingMode.NearestNeighbor,
+                BitmapScalingMode.Linear,
+                BitmapScalingMode.Fant
+            };
         }
 
         private void InitializeCommands()
@@ -178,7 +233,7 @@ namespace coler.ViewModel
 
         #endregion
 
-        #region Private Methods
+        #region Methods
 
         private void RefreshImages()
         {
@@ -200,6 +255,20 @@ namespace coler.ViewModel
             DisplayedImages = ShowSavedImages
                 ? SavedImages
                 : BufferImages;
+        }
+
+        public void SetSelectedImage(GenImageUi genImageUi)
+        {
+            if (genImageUi == null)
+            {
+                SelectedImageFilePath = string.Empty;
+                ShowImageZoom = false;
+            }
+            else
+            {
+                SelectedImageFilePath = genImageUi.ImageData.SourceFilePath;
+                ShowImageZoom = true;
+            }
         }
 
         #endregion

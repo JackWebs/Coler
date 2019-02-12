@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace coler.View
+namespace coler.UI.View
 {
     /// <summary>
     /// Interaction logic for GenerateImageView.xaml
