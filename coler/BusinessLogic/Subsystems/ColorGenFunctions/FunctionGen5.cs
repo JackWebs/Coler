@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using coler.BusinessLogic.Manager;
+﻿using coler.BusinessLogic.Manager;
 using coler.Model;
 using coler.Model.ColorGen.Parameters;
 using coler.Model.Enum;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
 {
@@ -42,9 +40,9 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
             {
                 if (rng.NextDouble() < probability)
                 {
-                    var radius = rng.Next(0, parameterY);
+                    var radius = rng.Next(1, parameterY);
 
-                    CreateSquare(x, y, color, radius);
+                    CreateCircle(x, y, color, radius);
 
                     returnColor = true;
                 }
@@ -115,12 +113,6 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
             foreach (var point in selectedPoints)
             {
                 {
-                    //if (point.CoordX == xCoord && point.CoordY == yCoord) return;
-                    /*var xDiff = Math.Abs(xCoord - point.CoordX);
-                    var yDiff = Math.Abs(yCoord - point.CoordY);
-
-                    var diff = Math.Sqrt(Math.Abs(xDiff * xDiff - yDiff * yDiff)) / radius;
-                    var colorValue = (int)(255 * diff);*/
                     var colorValue = 255;
 
                     switch (color)
@@ -150,37 +142,39 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
             }
         }
 
-        /*private void CreateCircle(int xCoord, int yCoord, EnColor color, double radius)
+        private void CreateCircle(int xCenter, int yCenter, EnColor color, int radius)
         {
             var colorManager = ColorGenManager.Instance;
             var points = colorManager.Points;
 
-            var width = points.Max(xPoint => xPoint.CoordX);
-            var height = points.Max(yPoint => yPoint.CoordY);
+            var width = points.Length;
+            var height = points[0].Length;
 
-            var xMin = (int) Math.Max(0, xCoord - radius);
-            var yMin = (int) Math.Max(0, yCoord - radius);
-
-            var xMax = (int) Math.Min(width, xCoord + radius);
-            var yMax = (int) Math.Min(height, yCoord + radius);
-
-            var count = xMax - xMin;
+            var xMin = Math.Max(0, xCenter - (radius + 1));
+            var yMin = Math.Max(0, yCenter - (radius + 1));
 
             var selectedPoints = new List<PixelData>();
 
-            for (var y = yMin; y < yMax; y++)
+            for (var y = -radius; y <= radius; y++)
             {
-                selectedPoints.AddRange(points.GetRange((y*width) + xMin, count));
+                for (var x = -radius; x <= radius; x++)
+                {
+                    if (x * x + y * y > radius * radius) continue;
+
+                    var realX = Math.Max(0, Math.Min(xMin + x, width));
+                    var realY = Math.Max(0, Math.Min(yMin + y, height));
+
+                    selectedPoints.Add(points[realX][realY]);
+                }
             }
 
             Parallel.ForEach(selectedPoints, point =>
             {
-                if (point.CoordX == xCoord && point.CoordY == yCoord) return;
-                var xDiff = Math.Abs(xCoord - point.CoordX);
-                var yDiff = Math.Abs(yCoord - point.CoordY);
+                var xDiff = 1 - Math.Abs(xCenter - point.CoordX) / (double)radius;
+                var yDiff = 1 - Math.Abs(yCenter - point.CoordY) / (double)radius;
 
-                var diff = Math.Sqrt(Math.Abs(xDiff * xDiff - yDiff * yDiff)) / radius;
-                var colorValue = (int) (255 * diff);
+                var diff = (xDiff + yDiff) / 2;
+                var colorValue = (int) Math.Max(0, Math.Min(255 * diff, 255));
 
                 switch (color)
                 {
@@ -206,6 +200,6 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
                         throw new ArgumentOutOfRangeException(nameof(color), color, null);
                 }
             });
-        }*/
+        }
     }
 }
