@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using coler.Model;
 using coler.Model.ColorGen;
 using coler.Model.ColorGen.Interface;

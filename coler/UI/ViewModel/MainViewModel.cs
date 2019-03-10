@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using coler.Annotations;
 using coler.Properties;
 using GalaSoft.MvvmLight;
 

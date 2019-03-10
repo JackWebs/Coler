@@ -45,6 +45,10 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
                     switch (_parameters.Shape)
                     {
                         case 0:
+                            CreateCircle(x, y, color, radius);
+                            break;
+
+                        case 1:
                             CreateSquare(x, y, color, radius);
                             break;
 

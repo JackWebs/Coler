@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using coler.Annotations;
 using coler.BusinessLogic.Subsystems.ColorGenFunctions;
 using coler.Model.ColorGen.Interface;
 using coler.Model.ColorGen.Parameters;
