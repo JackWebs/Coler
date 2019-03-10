@@ -181,7 +181,7 @@ namespace coler.UI.ViewModel
                 if (value == _height) return;
                 _height = value;
 
-                _colorGenManager.CanvasWidth = _height;
+                _colorGenManager.CanvasHeight = _height;
 
                 RaisePropertyChanged();
             }
@@ -504,7 +504,7 @@ namespace coler.UI.ViewModel
                 rng = new Random(_seed);
             }
 
-            (int r, int g, int b) color = (0,0,0);
+            (int r, int g, int b) color = (0, 0, 0);
 
             switch (GenType)
             {
@@ -642,7 +642,7 @@ namespace coler.UI.ViewModel
 
                     if (SelectedColorGen != null)
                     {
-                        Parallel.ForEach(Points, column =>
+                        foreach (var column in Points)
                         {
                             foreach (var point in column)
                             {
@@ -656,8 +656,9 @@ namespace coler.UI.ViewModel
                                 }
 
                                 CellsLoaded++;
+
                             }
-                        });
+                        }
                     }
 
                     break;
@@ -718,9 +719,9 @@ namespace coler.UI.ViewModel
             {
                 for (var y = 0; y < Height; y++)
                 {
-                    if (x <= xOffset || 
-                        y <= yOffset || 
-                        x >= MaskWidth + xOffset || 
+                    if (x <= xOffset ||
+                        y <= yOffset ||
+                        x >= MaskWidth + xOffset ||
                         y >= MaskHeight + yOffset) continue;
 
                     var templatePixel = template.GetPixel(x - xOffset, y - yOffset);

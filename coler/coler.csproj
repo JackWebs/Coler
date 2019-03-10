@@ -136,14 +136,17 @@
     <Compile Include="Model\ColorGen\ColorGen3.cs" />
     <Compile Include="Model\ColorGen\ColorGen1.cs" />
     <Compile Include="Model\ColorGen\ColorGen2.cs" />
+    <Compile Include="Model\Enum\EnParameterType.cs" />
     <Compile Include="Model\GenImage\GenImage.cs" />
     <Compile Include="Model\GenImage\GenImageList.cs" />
     <Compile Include="Model\GenImage\GenImageUi.cs" />
     <Compile Include="Model\Parameter\ParameterBase.cs" />
+    <Compile Include="Model\Parameter\ParameterBool.cs" />
     <Compile Include="Model\Parameter\ParameterGeneric.cs" />
     <Compile Include="Model\Parameter\ParameterInt.cs" />
     <Compile Include="Model\PixelData.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Properties\Annotations1.cs" />
     <Compile Include="UI\CustomControls\ZoomBorder.cs" />
     <Compile Include="UI\ViewModel\GenerateImageViewModel.cs" />
     <Compile Include="UI\ViewModel\MainViewModel.cs" />

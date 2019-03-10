@@ -7,16 +7,16 @@ using coler.Model.Enum;
 
 namespace coler.Model.Parameter
 {
-    public class ParameterInt : ParameterGeneric<int>
+    public class ParameterBool : ParameterGeneric<bool>
     {
-        public ParameterInt()
+        public ParameterBool()
         {
-            Type = EnParameterType.Integer;
+            Type = EnParameterType.Boolean;
         }
 
         public override void Randomize(Random rng)
         {
-            Value = rng.Next(ValueRange.First(), ValueRange.Last());
+            Value = rng.NextDouble() > 0.5;
         }
     }
 }

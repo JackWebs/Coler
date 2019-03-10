@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using coler.Model.Enum;
 using coler.Properties;
 
 namespace coler.Model.Parameter
@@ -12,6 +13,7 @@ namespace coler.Model.Parameter
     public abstract class ParameterBase : INotifyPropertyChanged
     {
         private string _name;
+        private EnParameterType _type;
 
         public string Name
         {
@@ -24,13 +26,24 @@ namespace coler.Model.Parameter
             }
         }
 
+        public EnParameterType Type
+        {
+            get => _type;
+            set
+            {
+                if (value == _type) return;
+                _type = value;
+                OnPropertyChanged();
+            }
+        }
+
         public abstract void Randomize(Random rng);
 
         #region INotify
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
+        [Annotations.NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

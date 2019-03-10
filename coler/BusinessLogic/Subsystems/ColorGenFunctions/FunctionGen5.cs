@@ -42,7 +42,16 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
                 {
                     var radius = rng.Next(1, parameterY);
 
-                    CreateCircle(x, y, color, radius);
+                    switch (_parameters.Shape)
+                    {
+                        case 0:
+                            CreateSquare(x, y, color, radius);
+                            break;
+
+                        default:
+                            CreateCircle(x, y, color, radius);
+                            break;
+                    }
 
                     returnColor = true;
                 }
@@ -86,7 +95,7 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
             return existingColorValue;
         }
 
-        private void CreateSquare(int xCoord, int yCoord, EnColor color, int radius)
+        private void CreateSquare(int xCenter, int yCenter, EnColor color, int radius)
         {
             var colorManager = ColorGenManager.Instance;
             var points = colorManager.Points;
@@ -94,11 +103,11 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
             var width = points.Length;
             var height = points[0].Length;
 
-            var xMin = Math.Max(0, xCoord - (radius + 1));
-            var yMin = Math.Max(0, yCoord - (radius + 1));
+            var xMin = Math.Max(0, xCenter - (radius + 1));
+            var yMin = Math.Max(0, yCenter - (radius + 1));
 
-            var xMax = Math.Min(width, xCoord + (radius + 1));
-            var yMax = Math.Min(height, yCoord + (radius + 1));
+            var xMax = Math.Min(width, xCenter + (radius + 1));
+            var yMax = Math.Min(height, yCenter + (radius + 1));
 
             var selectedPoints = new List<PixelData>();
 
@@ -110,36 +119,43 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
                 }
             }
 
-            foreach (var point in selectedPoints)
+            Parallel.ForEach(selectedPoints, point =>
             {
+                var colorValue = 255;
+
+                if (_parameters.HasGradient)
                 {
-                    var colorValue = 255;
+                    var xDiff = 1 - Math.Abs(xCenter - point.CoordX) / (double)radius;
+                    var yDiff = 1 - Math.Abs(yCenter - point.CoordY) / (double)radius;
 
-                    switch (color)
-                    {
-                        case EnColor.Red:
-
-                            point.ColorRed = colorValue;
-
-                            break;
-
-                        case EnColor.Green:
-
-                            point.ColorGreen = colorValue;
-
-                            break;
-
-                        case EnColor.Blue:
-
-                            point.ColorBlue = colorValue;
-
-                            break;
-
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(color), color, null);
-                    }
+                    var diff = Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+                    colorValue = (int)Math.Max(0, Math.Min(255 * diff, 255));
                 }
-            }
+
+                switch (color)
+                {
+                    case EnColor.Red:
+
+                        point.ColorRed = colorValue;
+
+                        break;
+
+                    case EnColor.Green:
+
+                        point.ColorGreen = colorValue;
+
+                        break;
+
+                    case EnColor.Blue:
+
+                        point.ColorBlue = colorValue;
+
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(color), color, null);
+                }
+            });
         }
 
         private void CreateCircle(int xCenter, int yCenter, EnColor color, int radius)
@@ -161,8 +177,8 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
                 {
                     if (x * x + y * y > radius * radius) continue;
 
-                    var realX = Math.Max(0, Math.Min(xMin + x, width));
-                    var realY = Math.Max(0, Math.Min(yMin + y, height));
+                    var realX = Math.Max(0, Math.Min(xMin + x, width-1));
+                    var realY = Math.Max(0, Math.Min(yMin + y, height-1));
 
                     selectedPoints.Add(points[realX][realY]);
                 }
@@ -170,11 +186,16 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
 
             Parallel.ForEach(selectedPoints, point =>
             {
-                var xDiff = 1 - Math.Abs(xCenter - point.CoordX) / (double)radius;
-                var yDiff = 1 - Math.Abs(yCenter - point.CoordY) / (double)radius;
+                var colorValue = 255;
 
-                var diff = (xDiff + yDiff) / 2;
-                var colorValue = (int) Math.Max(0, Math.Min(255 * diff, 255));
+                if (_parameters.HasGradient)
+                {
+                    var xDiff = 1 - Math.Abs(xCenter - point.CoordX) / (double)radius;
+                    var yDiff = 1 - Math.Abs(yCenter - point.CoordY) / (double)radius;
+
+                    var diff = 1 - Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+                    colorValue = (int)Math.Max(0, Math.Min(255 * diff, 255));
+                }
 
                 switch (color)
                 {

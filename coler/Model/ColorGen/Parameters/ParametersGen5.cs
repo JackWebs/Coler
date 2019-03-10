@@ -38,10 +38,13 @@ namespace coler.Model.ColorGen.Parameters
         public int BlueParameter => ((ParameterInt)Parameters[2]).Value;
         public int XParameter => ((ParameterInt)Parameters[3]).Value;
         public int YParameter => ((ParameterInt)Parameters[4]).Value;
+        public int Shape => ((ParameterInt)Parameters[5]).Value;
+        public bool HasGradient => ((ParameterBool)Parameters[6]).Value;
 
         public ParametersGen5()
         {
             var valueRange = new[] { 0, 1, 2 };
+            var shapeRange = new[] { 0, 1};
 
             Parameters = new ObservableDictionary<int, ParameterBase>
             {
@@ -69,6 +72,17 @@ namespace coler.Model.ColorGen.Parameters
                 {
                     Name = "Y Parameter",
                     Value = 20
+                } },
+                {5, new ParameterInt
+                {
+                    Name = "Shape",
+                    Value = 0,
+                    ValueRange = shapeRange
+                } },
+                {6, new ParameterBool
+                {
+                    Name = "Has Gradient",
+                    Value = true
                 } },
             };
 

@@ -74,8 +74,8 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
             var posX = Math.Abs(x - targetX);
             var posY = Math.Abs(y - targetY);
 
-            double valX = posX == 0 ? 255 : (posX / (double)canvasWidth) * 255.0;
-            double valY = posY == 0 ? 255 : (posY / (double)canvasHeight) * 255.0;
+            double valX = posX == 0 ? 0 : (posX / (double)canvasWidth) * 255.0;
+            double valY = posY == 0 ? 0 : (posY / (double)canvasHeight) * 255.0;
 
 
             var colorVal = Math.Max(0, Math.Min((int)new[] { valX, valY }.Average(), 255));
