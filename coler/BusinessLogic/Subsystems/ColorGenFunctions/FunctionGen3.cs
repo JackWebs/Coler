@@ -18,9 +18,9 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
 
         public (int, int, int) GeneratePixel(int x, int y, Random rng)
         {
-            var colorRed = GenerateColor(x, y, _parameters.RedParameter, rng);
-            var colorGreen = GenerateColor(x, y, _parameters.GreenParameter, rng);
-            var colorBlue = GenerateColor(x, y, _parameters.BlueParameter, rng);
+            int colorRed = GenerateColor(x, y, _parameters.RedParameter, rng);
+            int colorGreen = GenerateColor(x, y, _parameters.GreenParameter, rng);
+            int colorBlue = GenerateColor(x, y, _parameters.BlueParameter, rng);
 
             return (colorRed, colorGreen, colorBlue);
         }
@@ -32,7 +32,7 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
             //int xyDiff = Math.Max(Math.Abs(x - y), 1);
             int xyDiff = Math.Max((int)new[] { x, y }.Average(), 1);
 
-            var randCol = rng.Next(0, 256);
+            int randCol = rng.Next(0, 256);
 
             //randCol = 1;
 

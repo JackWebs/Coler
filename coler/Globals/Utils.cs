@@ -14,30 +14,29 @@ namespace coler.Globals
             string xmltext = File.ReadAllText(xmlFilePath);
 
             XmlReader xReader = XmlReader.Create(new StringReader(xmltext));
-            var deserializer = new XmlSerializer(typeof(T));
-            var deserializedData = (T)deserializer.Deserialize(xReader);
+            XmlSerializer deserializer = new XmlSerializer(typeof(T));
+            T deserializedData = (T)deserializer.Deserialize(xReader);
 
             return deserializedData;
         }
 
         public static void SerializeToXml(object instance, string path)
         {
-            using (FileStream fileStream = new FileStream(path, FileMode.Create))
-            using (StreamWriter sw = new StreamWriter(fileStream))
-            using (XmlTextWriter writer = new XmlTextWriter(sw))
-            {
-                XmlSerializer serializer = new XmlSerializer(instance.GetType());
+            using FileStream fileStream = new FileStream(path, FileMode.Create);
+            using StreamWriter sw = new StreamWriter(fileStream);
+            using XmlTextWriter writer = new XmlTextWriter(sw);
 
-                writer.Formatting = Formatting.Indented;
-                writer.Indentation = 4;
+            XmlSerializer serializer = new XmlSerializer(instance.GetType());
 
-                writer.WriteStartDocument();
+            writer.Formatting = Formatting.Indented;
+            writer.Indentation = 4;
 
-                serializer.Serialize(writer, instance);
+            writer.WriteStartDocument();
 
-                writer.WriteEndDocument();
-                writer.Close();
-            }
+            serializer.Serialize(writer, instance);
+
+            writer.WriteEndDocument();
+            writer.Close();
         }
 
         public static Bitmap Transparent2Color(Bitmap bmp1, Color target)
@@ -61,12 +60,12 @@ namespace coler.Globals
         /// <returns>The resized image.</returns>
         public static Bitmap ResizeImage(Image image, int width, int height)
         {
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
+            Rectangle destRect = new Rectangle(0, 0, width, height);
+            Bitmap destImage = new Bitmap(width, height);
 
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-            using (var graphics = Graphics.FromImage(destImage))
+            using (Graphics graphics = Graphics.FromImage(destImage))
             {
                 graphics.CompositingMode = CompositingMode.SourceCopy;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -74,11 +73,10 @@ namespace coler.Globals
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                using (var wrapMode = new ImageAttributes())
-                {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
+                using ImageAttributes wrapMode = new ImageAttributes();
+
+                wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
             }
 
             return destImage;
@@ -86,15 +84,15 @@ namespace coler.Globals
 
         public static Bitmap ResizeImage(Image image, double scale)
         {
-            var width = (int)(image.Width * scale);
-            var height = (int)(image.Height * scale);
+            int width = (int)(image.Width * scale);
+            int height = (int)(image.Height * scale);
 
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
+            Rectangle destRect = new Rectangle(0, 0, width, height);
+            Bitmap destImage = new Bitmap(width, height);
 
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-            using (var graphics = Graphics.FromImage(destImage))
+            using (Graphics graphics = Graphics.FromImage(destImage))
             {
                 graphics.CompositingMode = CompositingMode.SourceCopy;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -102,7 +100,7 @@ namespace coler.Globals
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                using (var wrapMode = new ImageAttributes())
+                using (ImageAttributes wrapMode = new ImageAttributes())
                 {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
                     graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);

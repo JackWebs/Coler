@@ -26,5 +26,6 @@ namespace coler.Globals
         #endregion
 
         public static double DoubleEqualityTolerance { get; } = 0.001;
+        public static int MaxBufferImages { get; } = 30;
     }
 }

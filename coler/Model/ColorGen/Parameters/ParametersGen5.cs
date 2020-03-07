@@ -13,7 +13,7 @@ using MyToolkit.Collections;
 
 namespace coler.Model.ColorGen.Parameters
 {
-    public class ParametersGen5: INotifyPropertyChanged
+    public class ParametersGen5 : INotifyPropertyChanged
     {
         private ObservableDictionary<int, ParameterBase> _parameters;
 
@@ -44,8 +44,8 @@ namespace coler.Model.ColorGen.Parameters
 
         public ParametersGen5()
         {
-            var valueRange = new[] { 0, 1, 2 };
-            var shapeRange = new[] { 0, 1};
+            int[] valueRange = new[] { 0, 1, 2 };
+            int[] shapeRange = new[] { 0, 1 };
 
             Parameters = new ObservableDictionary<int, ParameterBase>
             {
@@ -87,7 +87,7 @@ namespace coler.Model.ColorGen.Parameters
                 } },
             };
 
-            foreach (var parameter in Parameters.Values)
+            foreach (ParameterBase parameter in Parameters.Values)
             {
                 parameter.PropertyChanged += (sender, args) =>
                 {
@@ -100,7 +100,7 @@ namespace coler.Model.ColorGen.Parameters
 
         public void Randomize(Random rng)
         {
-            foreach (var parameter in Parameters.Values.Take(3))
+            foreach (ParameterBase parameter in Parameters.Values.Take(3))
             {
                 parameter.Randomize(rng);
             }
@@ -108,7 +108,7 @@ namespace coler.Model.ColorGen.Parameters
 
         public void SetCanvasSize()
         {
-            var colorGenManager = ColorGenManager.Instance;
+            ColorGenManager colorGenManager = ColorGenManager.Instance;
 
             CanvasWidth = colorGenManager.CanvasWidth;
             CanvasHeight = colorGenManager.CanvasHeight;
@@ -124,6 +124,6 @@ namespace coler.Model.ColorGen.Parameters
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        #endregion
+        #endregion INotify
     }
 }

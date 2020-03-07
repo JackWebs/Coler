@@ -54,7 +54,7 @@ namespace coler.Model.ColorGen
 
         public void RandomizeParameters(int seed)
         {
-            var rng = new Random(seed);
+            Random rng = new Random(seed);
             Parameters.Randomize(rng);
         }
 
@@ -78,6 +78,6 @@ namespace coler.Model.ColorGen
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        #endregion
+        #endregion INotify
     }
 }

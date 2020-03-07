@@ -40,7 +40,7 @@ namespace coler.Model.ColorGen.Parameters
 
         public ParametersGen1()
         {
-            var valueRange = new[] {0, 1, 2, 3};
+            int[] valueRange = new[] { 0, 1, 2, 3 };
 
             Parameters = new ObservableDictionary<int, ParameterBase>
             {
@@ -61,7 +61,7 @@ namespace coler.Model.ColorGen.Parameters
                 } }
             };
 
-            foreach (var parameter in Parameters.Values)
+            foreach (ParameterBase parameter in Parameters.Values)
             {
                 parameter.PropertyChanged += (sender, args) =>
                 {
@@ -74,7 +74,7 @@ namespace coler.Model.ColorGen.Parameters
 
         public void Randomize(Random rng)
         {
-            foreach (var parameter in Parameters.Values)
+            foreach (ParameterBase parameter in Parameters.Values)
             {
                 parameter.Randomize(rng);
             }
@@ -82,7 +82,7 @@ namespace coler.Model.ColorGen.Parameters
 
         public void SetCanvasSize()
         {
-            var colorGenManager = ColorGenManager.Instance;
+            ColorGenManager colorGenManager = ColorGenManager.Instance;
 
             CanvasWidth = colorGenManager.CanvasWidth;
             CanvasHeight = colorGenManager.CanvasHeight;
@@ -98,6 +98,6 @@ namespace coler.Model.ColorGen.Parameters
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        #endregion
+        #endregion INotify
     }
 }

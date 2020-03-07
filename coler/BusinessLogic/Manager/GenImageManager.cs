@@ -1,7 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using coler.Globals;
 using coler.Model.GenImage;
 
@@ -33,9 +35,9 @@ namespace coler.BusinessLogic.Manager
             FixThumbnails();
         }
 
-        public ObservableCollection<GenImage> GetImageList()
+        public GenImageList GetImageList()
         {
-            return ImageList.Images;
+            return ImageList;
         }
 
         private GenImageList ReadConfigFile()
@@ -51,6 +53,22 @@ namespace coler.BusinessLogic.Manager
         public void AddImage(GenImage genImage)
         {
             ImageList.Images.Add(genImage);
+
+            if (ImageList.Images.Count(x => !x.Saved) > Constants.MaxBufferImages)
+            {
+                GenImage[] orderedImages = ImageList.Images.OrderBy(x => x.DateCreated).ToArray();
+                int numberOfImagesToDelete = ImageList.Images.Count - Constants.MaxBufferImages;
+
+                ImageList.Images = new ObservableCollection<GenImage>(orderedImages.Skip(numberOfImagesToDelete));
+
+                IEnumerable<GenImage> imagesToDelete = orderedImages.Take(numberOfImagesToDelete);
+
+                foreach (GenImage image in imagesToDelete)
+                {
+                    DeleteImage(image);
+                }
+            }
+
             SaveConfigFile();
         }
 
@@ -58,10 +76,10 @@ namespace coler.BusinessLogic.Manager
         {
             if (File.Exists(genImage.SourceFilePath))
             {
-                var oldSourceFilePath = genImage.SourceFilePath;
+                string oldSourceFilePath = genImage.SourceFilePath;
 
                 genImage.SourceFilePath = Path.Combine(Constants.SavedImageDirectory, genImage.FileName);
-                File.Move(oldSourceFilePath, genImage.SourceFilePath);
+                File.Copy(oldSourceFilePath, genImage.SourceFilePath);
 
                 genImage.Saved = true;
             }
@@ -77,16 +95,16 @@ namespace coler.BusinessLogic.Manager
             }
 
             ImageList.Images.Remove(genImage);
-            SaveConfigFile();   
+            SaveConfigFile();
         }
 
         private void RemoveBrokenImages()
         {
-            var imageList = GetImageList();
+            ObservableCollection<GenImage> imageList = GetImageList().Images;
 
             for (int i = imageList.Count - 1; i >= 0; i--)
             {
-                var genImage = imageList[i];
+                GenImage genImage = imageList[i];
 
                 if (!string.IsNullOrEmpty(genImage.SourceFilePath)) continue;
 
@@ -96,11 +114,11 @@ namespace coler.BusinessLogic.Manager
 
         private void FixThumbnails()
         {
-            foreach(var genImage in GetImageList())
+            foreach (GenImage genImage in GetImageList().Images)
             {
                 if (File.Exists(genImage.ThumbnailFilePath)) continue;
 
-                var image = new Bitmap(genImage.SourceFilePath);
+                Bitmap image = new Bitmap(genImage.SourceFilePath);
                 Utils.ResizeImage(image, 0.5).Save(genImage.ThumbnailFilePath, ImageFormat.Png);
             }
         }

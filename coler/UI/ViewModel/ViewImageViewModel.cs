@@ -34,9 +34,9 @@ namespace coler.UI.ViewModel
         private bool _showSavedImages;
         private bool _showImageZoom;
 
-        #endregion
+        #endregion Backing Fields
 
-        #endregion
+        #endregion Fields
 
         #region Properties
 
@@ -120,6 +120,7 @@ namespace coler.UI.ViewModel
                 OnPropertyChanged();
             }
         }
+
         public bool ShowImageZoom
         {
             get => _showImageZoom;
@@ -131,14 +132,14 @@ namespace coler.UI.ViewModel
             }
         }
 
-        #endregion
+        #endregion Properties
 
         #region Getter Properties
 
         public ObservableCollection<GenImageUi> BufferImages => new ObservableCollection<GenImageUi>(Images.Where(x => !x.ImageData.Saved));
         public ObservableCollection<GenImageUi> SavedImages => new ObservableCollection<GenImageUi>(Images.Where(x => x.ImageData.Saved));
 
-        #endregion
+        #endregion Getter Properties
 
         #region Command Properties
 
@@ -147,7 +148,7 @@ namespace coler.UI.ViewModel
 
         public RelayCommand<GenImageUi> SelectImageCommand { get; private set; }
 
-        #endregion
+        #endregion Command Properties
 
         public ViewImageViewModel()
         {
@@ -189,13 +190,18 @@ namespace coler.UI.ViewModel
 
         private void AssignEvents()
         {
-            _genImageManager.GetImageList().CollectionChanged += (sender, args) =>
+            _genImageManager.GetImageList().Images.CollectionChanged += (sender, args) =>
+            {
+                RefreshImages();
+            };
+
+            _genImageManager.GetImageList().PropertyChanged += (sender, args) =>
             {
                 RefreshImages();
             };
         }
 
-        #endregion
+        #endregion Initialization
 
         #region Commands
 
@@ -206,7 +212,7 @@ namespace coler.UI.ViewModel
 
         public void SaveImages()
         {
-            foreach (var image in BufferImages.Where(x => x.IsSelected))
+            foreach (GenImageUi image in BufferImages.Where(x => x.IsSelected))
             {
                 _genImageManager.SaveImage(image.ImageData);
             }
@@ -216,12 +222,12 @@ namespace coler.UI.ViewModel
 
         public void DeleteImages()
         {
-            var imagesToRemove = Images.Where(x => x.IsSelected).ToArray();
-            var imageCount = imagesToRemove.Count() - 1;
+            GenImageUi[] imagesToRemove = Images.Where(x => x.IsSelected).ToArray();
+            int imageCount = imagesToRemove.Count() - 1;
 
-            for (var i = imageCount; i >= 0; i--)
+            for (int i = imageCount; i >= 0; i--)
             {
-                var image = imagesToRemove[i];
+                GenImageUi image = imagesToRemove[i];
 
                 if (!image.IsSelected) continue;
 
@@ -232,16 +238,16 @@ namespace coler.UI.ViewModel
             RefreshImages();
         }
 
-        #endregion
+        #endregion Commands
 
         #region Methods
 
         private void RefreshImages()
         {
-            var imageList = _genImageManager.GetImageList();
-            var genImageUiList = new List<GenImageUi>();
+            ObservableCollection<GenImage> imageList = _genImageManager.GetImageList().Images;
+            List<GenImageUi> genImageUiList = new List<GenImageUi>();
 
-            foreach (var image in imageList)
+            foreach (GenImage image in imageList)
             {
                 genImageUiList.Add(new GenImageUi(image));
             }
@@ -272,13 +278,9 @@ namespace coler.UI.ViewModel
             }
         }
 
-        #endregion
-
-        #region Events
+        #endregion Methods
 
 
-
-        #endregion
 
         #region INotify
 
@@ -290,6 +292,6 @@ namespace coler.UI.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        #endregion
+        #endregion INotify
     }
 }

@@ -16,7 +16,7 @@ namespace coler.UI.CustomControls
         private Point _start;
         private Point _lastImageTransform;
 
-        #endregion
+        #endregion Fields
 
         #region Properties
 
@@ -30,7 +30,7 @@ namespace coler.UI.CustomControls
             }
         }
 
-        #endregion
+        #endregion Properties
 
         #region Event Handlers
 
@@ -44,7 +44,8 @@ namespace coler.UI.CustomControls
             add => AddHandler(DoubleClickEvent, value);
             remove => RemoveHandler(DoubleClickEvent, value);
         }
-        #endregion
+
+        #endregion Event Handlers
 
         private TranslateTransform GetTranslateTransform(UIElement element)
         {
@@ -98,12 +99,12 @@ namespace coler.UI.CustomControls
             if (_child == null) return;
 
             // reset zoom
-            var st = GetScaleTransform(_child);
+            ScaleTransform st = GetScaleTransform(_child);
             st.ScaleX = 1.0;
             st.ScaleY = 1.0;
 
             // reset pan
-            var tt = GetTranslateTransform(_child);
+            TranslateTransform tt = GetTranslateTransform(_child);
             tt.X = 0.0;
             tt.Y = 0.0;
         }
@@ -112,8 +113,8 @@ namespace coler.UI.CustomControls
         {
             if (_child == null) return;
 
-            var st = GetScaleTransform(_child);
-            var tt = GetTranslateTransform(_child);
+            ScaleTransform st = GetScaleTransform(_child);
+            TranslateTransform tt = GetTranslateTransform(_child);
 
             if (!(zoom > 0) && (st.ScaleX < .4 || st.ScaleY < .4))
                 return;
@@ -142,7 +143,7 @@ namespace coler.UI.CustomControls
         {
             if (_child == null) return;
 
-            var tt = GetTranslateTransform(_child);
+            TranslateTransform tt = GetTranslateTransform(_child);
             _start = e.GetPosition(this);
             _origin = new Point(tt.X, tt.Y);
             Cursor = Cursors.Hand;
@@ -167,7 +168,7 @@ namespace coler.UI.CustomControls
             if (_child == null) return;
             if (!_child.IsMouseCaptured) return;
 
-            var tt = GetTranslateTransform(_child);
+            TranslateTransform tt = GetTranslateTransform(_child);
             Vector v = _start - e.GetPosition(this);
             tt.X = _origin.X - v.X;
             tt.Y = _origin.Y - v.Y;
@@ -175,7 +176,7 @@ namespace coler.UI.CustomControls
             LastImageTransform = new Point(tt.X, tt.Y);
         }
 
-        #endregion
+        #endregion Child Events
 
         #region General Events
 
@@ -189,7 +190,6 @@ namespace coler.UI.CustomControls
             RoutedEventArgs args = new RoutedEventArgs(DoubleClickEvent, this);
 
             RaiseEvent(args);
-
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -202,6 +202,6 @@ namespace coler.UI.CustomControls
             }
         }
 
-        #endregion
+        #endregion General Events
     }
 }

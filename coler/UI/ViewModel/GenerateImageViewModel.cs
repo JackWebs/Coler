@@ -1,4 +1,14 @@
-﻿using System;
+﻿using coler.BusinessLogic.Manager;
+using coler.Globals;
+using coler.Model.ColorGen.Interface;
+using coler.Model.Enum;
+using coler.Model.GenImage;
+using coler.Model.Parameter;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
+using Microsoft.Win32;
+using MyToolkit.Collections;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -7,15 +17,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using coler.BusinessLogic.Manager;
-using coler.Globals;
-using coler.Model.ColorGen.Interface;
-using coler.Model.GenImage;
-using coler.Model.Parameter;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
-using Microsoft.Win32;
-using MyToolkit.Collections;
 using Color = System.Windows.Media.Color;
 using PixelData = coler.Model.PixelData;
 
@@ -45,7 +46,8 @@ namespace coler.UI.ViewModel
 
         private int _width;
         private int _height;
-        private int _genType;
+        private EnGenType _genType;
+        private EnGenType[] _allGenTypes;
 
         private bool _randomizeParameters;
         private int _cellsLoaded;
@@ -62,10 +64,12 @@ namespace coler.UI.ViewModel
         private int _maskHeight;
         private int _originalMaskWidth;
         private int _originalMaskHeight;
+        private int _chunkWidth;
+        private int _chunkHeight;
 
-        #endregion
+        #endregion Backing Fields
 
-        #endregion
+        #endregion Fields
 
         #region Properties
 
@@ -86,8 +90,6 @@ namespace coler.UI.ViewModel
             {
                 _selectedColorGen = value;
                 RaisePropertyChanged();
-
-                SelectedParameters = SelectedColorGen.GetParameters();
             }
         }
 
@@ -195,7 +197,7 @@ namespace coler.UI.ViewModel
                 if (value == _maskWidth) return;
                 _maskWidth = value;
 
-                var scale = (double)_maskWidth / OriginalMaskWidth;
+                double scale = (double)_maskWidth / OriginalMaskWidth;
 
                 _maskHeight = (int)(OriginalMaskHeight * scale);
 
@@ -212,7 +214,7 @@ namespace coler.UI.ViewModel
                 if (value == _maskHeight) return;
                 _maskHeight = value;
 
-                var scale = (double)_maskHeight / OriginalMaskHeight;
+                double scale = (double)_maskHeight / OriginalMaskHeight;
 
                 _maskWidth = (int)(OriginalMaskWidth * scale);
 
@@ -249,7 +251,31 @@ namespace coler.UI.ViewModel
             }
         }
 
-        public int GenType
+        public int ChunkWidth
+        {
+            get => _chunkWidth;
+            set
+            {
+                if (value == _chunkWidth) return;
+                _chunkWidth = value;
+
+                RaisePropertyChanged();
+            }
+        }
+
+        public int ChunkHeight
+        {
+            get => _chunkHeight;
+            set
+            {
+                if (value == _chunkHeight) return;
+                _chunkHeight = value;
+
+                RaisePropertyChanged();
+            }
+        }
+
+        public EnGenType GenType
         {
             get => _genType;
             set
@@ -262,9 +288,21 @@ namespace coler.UI.ViewModel
             }
         }
 
+        public EnGenType[] AllGenTypes
+        {
+            get => _allGenTypes;
+            set
+            {
+                if (value == _allGenTypes) return;
+                _allGenTypes = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private void SetSelectedColorGen()
         {
             SelectedColorGen = _colorGenManager.GetColorGen(GenType);
+            SelectedParameters = SelectedColorGen?.GetParameters() ?? new ObservableDictionary<int, ParameterBase>();
         }
 
         public int CellsLoaded
@@ -333,7 +371,7 @@ namespace coler.UI.ViewModel
             }
         }
 
-        #endregion
+        #endregion Properties
 
         #region Getter Properties
 
@@ -341,7 +379,7 @@ namespace coler.UI.ViewModel
 
         public System.Drawing.Color BackgroundColor => System.Drawing.Color.FromArgb(SelectedColor.R, SelectedColor.G, SelectedColor.B);
 
-        #endregion
+        #endregion Getter Properties
 
         #region OpenFileDialog properties
 
@@ -350,7 +388,7 @@ namespace coler.UI.ViewModel
 
         public bool DialogResult { get; protected set; }
 
-        #endregion
+        #endregion OpenFileDialog properties
 
         #region Command Properties
 
@@ -359,7 +397,7 @@ namespace coler.UI.ViewModel
         public ICommand GenerateImageCommand { get; private set; }
         public ICommand SelectTemplateCommand { get; private set; }
 
-        #endregion
+        #endregion Command Properties
 
         public GenerateImageViewModel()
         {
@@ -381,9 +419,12 @@ namespace coler.UI.ViewModel
                 BitmapScalingMode.Linear,
                 BitmapScalingMode.Fant
             };
+            AllGenTypes = (EnGenType[])Enum.GetValues(typeof(EnGenType));
 
             _width = _colorGenManager.CanvasWidth;
             _height = _colorGenManager.CanvasHeight;
+            _chunkHeight = 100;
+            _chunkWidth = 100;
 
             InitializeCommands();
             InitializePoints();
@@ -405,7 +446,7 @@ namespace coler.UI.ViewModel
             RefreshGrid();
         }
 
-        #endregion
+        #endregion Initialization
 
         #region Commands
 
@@ -416,7 +457,7 @@ namespace coler.UI.ViewModel
 
         public void RedrawGrid()
         {
-            var rand = new Random();
+            Random rand = new Random();
 
             _seed = rand.Next(0, 1000000);
 
@@ -425,7 +466,7 @@ namespace coler.UI.ViewModel
 
         public void GenerateImage()
         {
-            var genImage = new GenImage(DateTime.Now);
+            GenImage genImage = new GenImage(DateTime.Now);
 
             using (Bitmap image = new Bitmap(Width, Height))
             {
@@ -442,9 +483,22 @@ namespace coler.UI.ViewModel
 
                 UseTemplate = UseTemplate && mask != null;
 
-                foreach (var column in Points)
+                /*PixelData[][][] chunks = GetChunks(ChunkWidth, ChunkHeight, Points);
+
+                Parallel.ForEach(chunks, chunk =>
                 {
-                    foreach (var point in column)
+                    foreach (PixelData[] column in chunk)
+                    {
+                        foreach (PixelData point in column)
+                        {
+                            SetPixelColor(image, mask, point);
+                        }
+                    }
+                });*/
+
+                foreach (PixelData[] column in Points)
+                {
+                    foreach (PixelData point in column)
                     {
                         SetPixelColor(image, mask, point);
                     }
@@ -490,14 +544,74 @@ namespace coler.UI.ViewModel
             }
         }
 
-        #endregion
+        #endregion Commands
 
         #region Private Methods
 
+        private static T[][][] GetChunks<T>(int chunkWidth, int chunkHeight, IReadOnlyList<T[]> collection)
+        {
+            if (chunkWidth == 0 ||
+                chunkHeight == 0) return new T[0][][];
+
+            int collectionWidth = collection.Count;
+            int collectionHeight = collection.FirstOrDefault()?.Length ?? 0;
+
+            if (collectionWidth == 0 ||
+                collectionHeight == 0) return new T[0][][];
+
+            List<T[][]> chunkList = new List<T[][]>();
+
+            int yCount = collectionHeight;
+            int lastChunkEndY = 0;
+
+            while (yCount > 0)
+            {
+                int xCount = collectionWidth;
+                int lastChunkEndX = 0;
+
+                int currentChunkHeight = Math.Min(chunkHeight, yCount);
+                yCount -= currentChunkHeight;
+
+                while (xCount > 0)
+                {
+                    int currentChunkWidth = Math.Min(chunkWidth, xCount);
+                    xCount -= currentChunkWidth;
+
+                    T[][] xx = new T[currentChunkWidth][];
+
+                    for (int i = 0; i < currentChunkWidth; i++)
+                    {
+                        T[] yy = new T[currentChunkHeight];
+
+                        for (int j = 0; j < currentChunkHeight; j++)
+                        {
+                            yy[j] = collection[lastChunkEndX + i][lastChunkEndY + j];
+                        }
+
+                        xx[i] = yy;
+                    }
+
+                    chunkList.Add(xx);
+
+                    lastChunkEndX += currentChunkWidth;
+                }
+
+                lastChunkEndY += currentChunkHeight;
+            }
+
+            return chunkList.ToArray();
+
+            // Loop x until xCount == 0
+            // Take chunkWidth from xCount
+            // Take Y from Y count (first loop only)
+            // Add new chunk
+            // Reset xCount and loop
+        }
+
         private void SetPointColor(PixelData pixel, Random rng = null)
         {
-            var x = pixel.CoordX;
-            var y = pixel.CoordY;
+            int x = pixel.CoordX;
+            int y = pixel.CoordY;
 
             if (rng == null)
             {
@@ -530,19 +644,6 @@ namespace coler.UI.ViewModel
                     break;
             }
 
-            /*if (GenType == 0)
-            {
-                
-            }
-            else
-            {
-                
-
-                colorGreen = SelectedColorGen.GenerateColor(x, y, GreenParameter, EnColor.Green, rng, point);
-                colorRed = SelectedColorGen.GenerateColor(x, y, RedParameter, EnColor.Red, rng, point);
-                colorBlue = SelectedColorGen.GenerateColor(x, y, BlueParameter, EnColor.Blue, rng, point);
-            }*/
-
             pixel.ColorRed = color.r;
             pixel.ColorBlue = color.g;
             pixel.ColorGreen = color.b;
@@ -552,19 +653,19 @@ namespace coler.UI.ViewModel
         {
             if (UseTemplate)
             {
-                var templatePixel = template.GetPixel(point.CoordX, point.CoordY);
+                System.Drawing.Color templatePixel = template.GetPixel(point.CoordX, point.CoordY);
 
-                var isWhite = templatePixel.R == 255 &&
+                bool isWhite = templatePixel.R == 255 &&
                               templatePixel.G == 255 &&
                               templatePixel.B == 255;
 
                 if (!isWhite)
                 {
-                    var transparencyValue = templatePixel.A < 255
+                    int transparencyValue = templatePixel.A < 255
                         ? templatePixel.A
                         : 255 - new[] { templatePixel.R, templatePixel.G, templatePixel.B }.Max();
 
-                    var color = System.Drawing.Color.FromArgb
+                    System.Drawing.Color color = System.Drawing.Color.FromArgb
                     (
                         transparencyValue,
                         point.ColorRed,
@@ -581,7 +682,7 @@ namespace coler.UI.ViewModel
             }
             else
             {
-                var color = System.Drawing.Color.FromArgb
+                System.Drawing.Color color = System.Drawing.Color.FromArgb
                 (
                     point.ColorRed,
                     point.ColorGreen,
@@ -608,15 +709,15 @@ namespace coler.UI.ViewModel
             {
                 case EnPointUpdateType.Refresh:
 
-                    var points = new PixelData[Width][];
+                    PixelData[][] points = new PixelData[Width][];
 
                     Parallel.For(0, Width, x =>
                     {
-                        var column = new PixelData[Height];
+                        PixelData[] column = new PixelData[Height];
 
-                        for (var y = 0; y < Height; y++)
+                        for (int y = 0; y < Height; y++)
                         {
-                            var point = new PixelData
+                            PixelData point = new PixelData
                             {
                                 CoordX = x,
                                 CoordY = y,
@@ -638,27 +739,31 @@ namespace coler.UI.ViewModel
 
                     _colorGenManager.ClearPoints();
 
-                    var rng = new Random(_seed);
+                    Random rng = new Random(_seed);
 
                     if (SelectedColorGen != null)
                     {
-                        foreach (var column in Points)
+                        PixelData[][][] chunks = GetChunks(ChunkWidth, ChunkHeight, Points);
+
+                        Parallel.ForEach(chunks, chunk =>
                         {
-                            foreach (var point in column)
+                            foreach (PixelData[] column in chunk)
                             {
-                                if (GenType == 5)
+                                foreach (PixelData point in column)
                                 {
-                                    SetPointColor(point, rng);
-                                }
-                                else
-                                {
-                                    SetPointColor(point);
-                                }
+                                    if (GenType == EnGenType.BitsPieces)
+                                    {
+                                        SetPointColor(point, rng);
+                                    }
+                                    else
+                                    {
+                                        SetPointColor(point);
+                                    }
 
-                                CellsLoaded++;
-
+                                    CellsLoaded++;
+                                }
                             }
-                        }
+                        });
                     }
 
                     break;
@@ -704,9 +809,9 @@ namespace coler.UI.ViewModel
 
             if (InvertTemplate)
             {
-                for (var x = 0; x < Width; x++)
+                for (int x = 0; x < Width; x++)
                 {
-                    for (var y = 0; y < Height; y++)
+                    for (int y = 0; y < Height; y++)
                     {
                         mask.SetPixel(x, y, System.Drawing.Color.Black);
                     }
@@ -715,16 +820,16 @@ namespace coler.UI.ViewModel
                 template = InvertMask(template);
             }
 
-            for (var x = 0; x < Width; x++)
+            for (int x = 0; x < Width; x++)
             {
-                for (var y = 0; y < Height; y++)
+                for (int y = 0; y < Height; y++)
                 {
                     if (x <= xOffset ||
                         y <= yOffset ||
                         x >= MaskWidth + xOffset ||
                         y >= MaskHeight + yOffset) continue;
 
-                    var templatePixel = template.GetPixel(x - xOffset, y - yOffset);
+                    System.Drawing.Color templatePixel = template.GetPixel(x - xOffset, y - yOffset);
                     mask.SetPixel(x, y, templatePixel);
                 }
             }
@@ -736,15 +841,15 @@ namespace coler.UI.ViewModel
 
         private Bitmap InvertMask(Bitmap template)
         {
-            var invertBitmap = new Bitmap(template.Width, template.Height);
+            Bitmap invertBitmap = new Bitmap(template.Width, template.Height);
 
-            for (var x = 0; x < template.Width; x++)
+            for (int x = 0; x < template.Width; x++)
             {
-                for (var y = 0; y < template.Height; y++)
+                for (int y = 0; y < template.Height; y++)
                 {
-                    var templatePixel = template.GetPixel(x, y);
+                    System.Drawing.Color templatePixel = template.GetPixel(x, y);
 
-                    var invertedColor = System.Drawing.Color.FromArgb
+                    System.Drawing.Color invertedColor = System.Drawing.Color.FromArgb
                         (
                             Math.Abs(templatePixel.R - 255),
                             Math.Abs(templatePixel.G - 255),
@@ -758,12 +863,6 @@ namespace coler.UI.ViewModel
             return invertBitmap;
         }
 
-        #endregion
-
-        #region Events
-
-
-
-        #endregion
+        #endregion Private Methods
     }
 }

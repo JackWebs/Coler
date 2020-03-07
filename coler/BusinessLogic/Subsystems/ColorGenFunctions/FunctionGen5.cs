@@ -19,9 +19,9 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
 
         public (int, int, int) GeneratePixel(int x, int y, Random rng, PixelData point)
         {
-            var colorRed = GenerateColor(x, y, EnColor.Red, rng, point);
-            var colorGreen = GenerateColor(x, y, EnColor.Green, rng, point);
-            var colorBlue = GenerateColor(x, y, EnColor.Blue, rng, point);
+            int colorRed = GenerateColor(x, y, EnColor.Red, rng, point);
+            int colorGreen = GenerateColor(x, y, EnColor.Green, rng, point);
+            int colorBlue = GenerateColor(x, y, EnColor.Blue, rng, point);
 
             return (colorRed, colorGreen, colorBlue);
         }
@@ -30,17 +30,17 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
         {
             if (rng == null || point == null) return 0;
 
-            var probability = (double)1 / (_parameters.XParameter * _parameters.XParameter);
+            double probability = (double)1 / (_parameters.XParameter * _parameters.XParameter);
 
             bool returnColor;
 
-            var parameterY = _parameters.YParameter;
+            int parameterY = _parameters.YParameter;
 
             lock (rng)
             {
                 if (rng.NextDouble() < probability)
                 {
-                    var radius = rng.Next(1, parameterY);
+                    int radius = rng.Next(1, parameterY);
 
                     switch (_parameters.Shape)
                     {
@@ -101,23 +101,23 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
 
         private void CreateSquare(int xCenter, int yCenter, EnColor color, int radius)
         {
-            var colorManager = ColorGenManager.Instance;
-            var points = colorManager.Points;
+            ColorGenManager colorManager = ColorGenManager.Instance;
+            PixelData[][] points = colorManager.Points;
 
-            var width = points.Length;
-            var height = points[0].Length;
+            int width = points.Length;
+            int height = points[0].Length;
 
-            var xMin = Math.Max(0, xCenter - (radius + 1));
-            var yMin = Math.Max(0, yCenter - (radius + 1));
+            int xMin = Math.Max(0, xCenter - (radius + 1));
+            int yMin = Math.Max(0, yCenter - (radius + 1));
 
-            var xMax = Math.Min(width, xCenter + (radius + 1));
-            var yMax = Math.Min(height, yCenter + (radius + 1));
+            int xMax = Math.Min(width, xCenter + (radius + 1));
+            int yMax = Math.Min(height, yCenter + (radius + 1));
 
-            var selectedPoints = new List<PixelData>();
+            List<PixelData> selectedPoints = new List<PixelData>();
 
-            for (var x = xMin; x < xMax; x++)
+            for (int x = xMin; x < xMax; x++)
             {
-                for (var y = yMin; y < yMax; y++)
+                for (int y = yMin; y < yMax; y++)
                 {
                     selectedPoints.Add(points[x][y]);
                 }
@@ -125,14 +125,14 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
 
             Parallel.ForEach(selectedPoints, point =>
             {
-                var colorValue = 255;
+                int colorValue = 255;
 
                 if (_parameters.HasGradient)
                 {
-                    var xDiff = 1 - Math.Abs(xCenter - point.CoordX) / (double)radius;
-                    var yDiff = 1 - Math.Abs(yCenter - point.CoordY) / (double)radius;
+                    double xDiff = 1 - Math.Abs(xCenter - point.CoordX) / (double)radius;
+                    double yDiff = 1 - Math.Abs(yCenter - point.CoordY) / (double)radius;
 
-                    var diff = Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+                    double diff = Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
                     colorValue = (int)Math.Max(0, Math.Min(255 * diff, 255));
                 }
 
@@ -164,25 +164,25 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
 
         private void CreateCircle(int xCenter, int yCenter, EnColor color, int radius)
         {
-            var colorManager = ColorGenManager.Instance;
-            var points = colorManager.Points;
+            ColorGenManager colorManager = ColorGenManager.Instance;
+            PixelData[][] points = colorManager.Points;
 
-            var width = points.Length;
-            var height = points[0].Length;
+            int width = points.Length;
+            int height = points[0].Length;
 
-            var xMin = Math.Max(0, xCenter - (radius + 1));
-            var yMin = Math.Max(0, yCenter - (radius + 1));
+            int xMin = Math.Max(0, xCenter - (radius + 1));
+            int yMin = Math.Max(0, yCenter - (radius + 1));
 
-            var selectedPoints = new List<PixelData>();
+            List<PixelData> selectedPoints = new List<PixelData>();
 
-            for (var y = -radius; y <= radius; y++)
+            for (int y = -radius; y <= radius; y++)
             {
-                for (var x = -radius; x <= radius; x++)
+                for (int x = -radius; x <= radius; x++)
                 {
                     if (x * x + y * y > radius * radius) continue;
 
-                    var realX = Math.Max(0, Math.Min(xMin + x, width-1));
-                    var realY = Math.Max(0, Math.Min(yMin + y, height-1));
+                    int realX = Math.Max(0, Math.Min(xMin + x, width - 1));
+                    int realY = Math.Max(0, Math.Min(yMin + y, height - 1));
 
                     selectedPoints.Add(points[realX][realY]);
                 }
@@ -190,14 +190,14 @@ namespace coler.BusinessLogic.Subsystems.ColorGenFunctions
 
             Parallel.ForEach(selectedPoints, point =>
             {
-                var colorValue = 255;
+                int colorValue = 255;
 
                 if (_parameters.HasGradient)
                 {
-                    var xDiff = 1 - Math.Abs(xCenter - point.CoordX) / (double)radius;
-                    var yDiff = 1 - Math.Abs(yCenter - point.CoordY) / (double)radius;
+                    double xDiff = 1 - Math.Abs(xCenter - point.CoordX) / (double)radius;
+                    double yDiff = 1 - Math.Abs(yCenter - point.CoordY) / (double)radius;
 
-                    var diff = 1 - Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+                    double diff = 1 - Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
                     colorValue = (int)Math.Max(0, Math.Min(255 * diff, 255));
                 }
 
